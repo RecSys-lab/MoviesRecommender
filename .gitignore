@@ -128,5 +128,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Configurations
+config.py
+
 # Generated Dataset files
 /Data/generated/output.csv
