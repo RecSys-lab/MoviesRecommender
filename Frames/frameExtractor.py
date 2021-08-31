@@ -24,6 +24,7 @@ def frameExtractor(moviesDirectory, outputDirectory, networkInputSize):
                 normalizedVideoName[0].replace("_", "")).replace(" ", "")
             # Creating output folder
             generatedPath = outputDirectory + '/' + normalizedVideoName
+            # Do not re-generate frames for movies if there is a folder with their normalized name
             if os.path.exists(generatedPath):
                 # os.mkdir(generatedPath)
                 print(
