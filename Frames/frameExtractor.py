@@ -1,6 +1,7 @@
 import os
 import cv2
 import string
+import logging
 from Frames.resizeTools.frameResize import frameResize
 
 
@@ -9,11 +10,14 @@ def frameExtractor(moviesDirectory, outputDirectory, networkInputSize):
     print(f'Fetching the list of items in "{moviesDirectory}"')
     try:
         videoFiles = os.listdir(moviesDirectory)
+        # Create logging structure
+        logging.basicConfig(filename='frame-logger.log', level=logging.INFO)
         # Filter only video files
         for file in videoFiles:
             if not file.lower().endswith(('.mkv', '.avi', '.mp4')):
                 videoFiles.remove(file)
         print(f'Number of videos: {len(videoFiles)}\n')
+        logging.info(f'Number of videos: {len(videoFiles)}\n')
         # Iterate on all video files in the given directory
         for file in videoFiles:
             print(f'Processing video {file} ...')
@@ -28,6 +32,8 @@ def frameExtractor(moviesDirectory, outputDirectory, networkInputSize):
             if os.path.exists(generatedPath):
                 # os.mkdir(generatedPath)
                 print(
+                    f'Skipping movie {file} as its folder already exists!\n')
+                logging.info(
                     f'Skipping movie {file} as its folder already exists!\n')
             else:
                 os.mkdir(generatedPath)
@@ -59,15 +65,23 @@ def frameExtractor(moviesDirectory, outputDirectory, networkInputSize):
                             currentTime = int(frameCounter / frameRate)
                             print(
                                 f'Prcessing frame #{frameCounter} ({currentTime:,} seconds passed) ...')
+                            logging.info(
+                                f'Prcessing frame #{frameCounter} ({currentTime:,} seconds passed) ...')
                         frameCounter += 1
                     print(
                         f'Frames generated for {normalizedVideoName} in {generatedPath}')
                 except cv2.error as openCVError:
                     print('🚨 Error while processing video:', str(openCVError))
+                    logging.error(
+                        f'Error while processing video {openCVError}')
                 except Exception as otherError:
                     print('🚨 Error while running the app:', str(otherError))
+                    logging.error(f'Error while running the app: {otherError}')
     except FileNotFoundError:
         print(
             "🚨 [FileNotFoundError] The input directory does not exist or contain video files!")
+        logging.error(
+            f'The input directory does not exist or contain video files!')
     except Exception as e:
         print('🚨 Error while running the app:', str(e))
+        logging.error(f'Error while running the app: {e}')
