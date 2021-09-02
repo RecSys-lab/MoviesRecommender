@@ -1,14 +1,24 @@
+import logging
+import datetime
 import pandas as pd
 
 
 def datasetGenerator(moviesList, movieLenzRatings, generatedDataset):
+    # Create logging structure
+    logging.basicConfig(filename='data-logger.log', level=logging.INFO)
+    currentMoment = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    logging.info(f'\n[{currentMoment}] Starting Dataset Generator')
+
     print('Reading dataset files ...')
     movies = pd.read_csv(moviesList)
     print(f'Dataset loaded with {len(movies)} instances (movies)')
+    logging.info(f'Number of videos: {len(movies)}')
 
     print('Reading ratings files from MovieLenz ...')
     ratings = pd.read_csv(movieLenzRatings)
     print(f'Ratings loaded with {len(ratings)} instances (user ratings)')
+    logging.info(
+        f'Ratings loaded with {len(ratings)} instances (user ratings)')
 
     print('Joining files on the field MovieId ...')
     jointItems = movies.merge(ratings, on='movieId')
@@ -24,3 +34,5 @@ def datasetGenerator(moviesList, movieLenzRatings, generatedDataset):
     jointItems.to_csv(generatedDataset, index=False)
 
     print('Finished generating dataset!')
+    currentMoment = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    logging.info(f'[{currentMoment}] Finished generating dataset!')
