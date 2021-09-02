@@ -34,7 +34,7 @@ def frameExtractor(moviesDirectory, outputDirectory, networkInputSize):
                 print(
                     f'Skipping movie {file} as its folder already exists!\n')
                 logging.info(
-                    f'Skipping movie {file} as its folder already exists!\n')
+                    f'Skipping movie {file} as its folder already exists!')
             else:
                 os.mkdir(generatedPath)
                 # Capturing video
@@ -64,11 +64,11 @@ def frameExtractor(moviesDirectory, outputDirectory, networkInputSize):
                         if (frameCounter % 1000 == 0):
                             currentTime = int(frameCounter / frameRate)
                             print(
-                                f'Prcessing frame #{frameCounter} ({currentTime:,} seconds passed) ...')
-                            logging.info(
-                                f'Prcessing frame #{frameCounter} ({currentTime:,} seconds passed) ...')
+                                f'Processing frame #{frameCounter} ({currentTime:,} seconds passed) ...')
                         frameCounter += 1
                     print(
+                        f'Frames generated for {normalizedVideoName} in {generatedPath}')
+                    logging.info(
                         f'Frames generated for {normalizedVideoName} in {generatedPath}')
                 except cv2.error as openCVError:
                     print('🚨 Error while processing video:', str(openCVError))
