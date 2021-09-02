@@ -1,23 +1,27 @@
 import os
 import cv2
+import time
 import string
 import logging
+import datetime
 from Frames.resizeTools.frameResize import frameResize
 
 
 # This module extracts frames from a given list of movies
 def frameExtractor(moviesDirectory, outputDirectory, networkInputSize):
     print(f'Fetching the list of items in "{moviesDirectory}"')
+    # Create logging structure
+    logging.basicConfig(filename='frame-logger.log', level=logging.INFO)
+    currentMoment = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    logging.info(f'\n[{currentMoment}] Frames Extractor Started!')
     try:
         videoFiles = os.listdir(moviesDirectory)
-        # Create logging structure
-        logging.basicConfig(filename='frame-logger.log', level=logging.INFO)
         # Filter only video files
         for file in videoFiles:
             if not file.lower().endswith(('.mkv', '.avi', '.mp4')):
                 videoFiles.remove(file)
         print(f'Number of videos: {len(videoFiles)}\n')
-        logging.info(f'Number of videos: {len(videoFiles)}\n')
+        logging.info(f'Number of videos: {len(videoFiles)}')
         # Iterate on all video files in the given directory
         for file in videoFiles:
             print(f'Processing video {file} ...')
@@ -47,6 +51,7 @@ def frameExtractor(moviesDirectory, outputDirectory, networkInputSize):
                         f'Extracting frames (one frame in every {frameRate} frames) ...')
                     frameCounter = 0
                     fileNameCounter = 0
+                    startTime = time.time()
                     while success:
                         if (frameCounter % frameRate == 0):
                             # Resizing the image, while preserving its aspect-ratio
@@ -66,10 +71,12 @@ def frameExtractor(moviesDirectory, outputDirectory, networkInputSize):
                             print(
                                 f'Processing frame #{frameCounter} ({currentTime:,} seconds passed) ...')
                         frameCounter += 1
+                    # Finished extracting frames
+                    elapsedTime = int(time.time() - startTime)
                     print(
-                        f'Frames generated for {normalizedVideoName} in {generatedPath}')
+                        f'Frames generated for {normalizedVideoName} in {generatedPath} (it took {elapsedTime} seconds)')
                     logging.info(
-                        f'Frames generated for {normalizedVideoName} in {generatedPath}')
+                        f'Frames generated for {normalizedVideoName} in {generatedPath} (it took {elapsedTime} seconds)')
                 except cv2.error as openCVError:
                     print('🚨 Error while processing video:', str(openCVError))
                     logging.error(

@@ -82,3 +82,8 @@ After providing the configurations, you can easily run the app using the command
 ```python
 python ./main.py
 ```
+
+## TODOs
+
+- Feature extractors (AlexNet, VGG, etc)
+- Code to find trailers of movies
