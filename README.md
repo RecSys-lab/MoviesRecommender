@@ -25,7 +25,7 @@ Note that you should also install NVIDIA® CUDA® Deep Neural Network library™
 
 ## 📑 Files and Modules
 
-The application contains two main modules, including **Data Processing** and **Feature Extraction**, both accessible via the **main.py** file. Each of the mentioned modules provide a different set of utilities:
+The application contains two main modules, including **Data Processing**, **Frame Extraction**, and **Visual Feature Extraction**, all accessible via the **main.py** file. Each of the mentioned modules provide a different set of utilities:
 
 #### I. Data Processing
 

@@ -1,13 +1,9 @@
 from PyInquirer import prompt
-from Models.AlexNet import main
-from Data.datasetGenerator import datasetGenerator
-from Data.stats.moviesDataStats import moviesDataStats
-from Data.stats.generatedDataStats import generatedDataStats
+from FeatureExtraction.Models.AlexNet import alexNetLauncher
+
 
 # Static variables
 alexNetInputSize = 227
-
-main(alexNetInputSize)
 
 
 modules = ['AlexNet', 'VGG19', 'InceptionV3', 'ResNet50']
@@ -18,7 +14,7 @@ def getUserInput():
         {
             'type': 'list',
             'name': 'Action',
-            'message': 'Select your action from the list below:',
+            'message': 'Select a feature extraction model from the list below:',
             'choices': modules
         },
     ]
@@ -26,12 +22,13 @@ def getUserInput():
     return userInputs
 
 
-def dataProcess(moviesList, movieLenzRatings, generatedDataset):
+def featureExtractor(inputDirectory, outputDirectory):
     userInputs = getUserInput()['Action']
-    if userInputs == 'New Dataset Generator':
-        print('This module merges the the given movies list with metadata of MovieLenz dataset')
-        datasetGenerator(moviesList, movieLenzRatings, generatedDataset)
-    elif userInputs == 'Data Analyzer':
-        print('This module provides some analysis on the dataset')
-        moviesDataStats(moviesList)
-        generatedDataStats(generatedDataset)
+    if userInputs == 'AlexNet':
+        alexNetLauncher(alexNetInputSize)
+    elif userInputs == 'VGG19':
+        print('VGG19')
+    elif userInputs == 'InceptionV3':
+        print('InceptionV3')
+    elif userInputs == 'ResNet50':
+        print('ResNet50')

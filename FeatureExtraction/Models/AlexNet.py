@@ -4,7 +4,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D
 
 
-def SkeletonBuilder(imageShape):
+def skeletonBuilder(imageShape):
     print('\n🔥 Building AlexNet architecture ...')
     # Instantiate a Sequential model
     alexNet = Sequential()
@@ -60,7 +60,7 @@ def SkeletonBuilder(imageShape):
                     optimizer='adam', metrics=['accuracy'])
 
 
-def main(inputSize):
+def alexNetLauncher(inputSize):
     imageShape = (inputSize, inputSize, 3)
     np.random.seed(1000)  # Instantiate an empty model
-    SkeletonBuilder(imageShape)
+    skeletonBuilder(imageShape)
