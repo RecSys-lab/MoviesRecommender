@@ -11,12 +11,17 @@ In order to run the application, you will need to install the Python libraries l
 - SciPy >= 1.6
 - PyInquirer >= 1.0.3
 - OpenCV-Python >= 4.1.1
+- Tensorflow >= 2.6.0
+- Keras >= 2.6.0
+- CUDA >= 11.4
 
 For a simple solution, you can simply run the below command in the root directory:
 
 ```python
 pip install -r requirements.txt
 ```
+
+Note that you should also install NVIDIA® CUDA® Deep Neural Network library™ (cuDNN) for high-performance GPU acceleration. This is used when training the DNN models in the feature extraction stage.
 
 ## 📑 Files and Modules
 
