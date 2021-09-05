@@ -60,7 +60,7 @@ def skeletonBuilder(imageShape):
                     optimizer='adam', metrics=['accuracy'])
 
 
-def alexNetLauncher(inputSize):
+def AlexNetLauncher(inputSize):
     imageShape = (inputSize, inputSize, 3)
     np.random.seed(1000)  # Instantiate an empty model
     skeletonBuilder(imageShape)

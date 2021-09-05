@@ -1,12 +1,16 @@
 from PyInquirer import prompt
-from FeatureExtraction.Models.AlexNet import alexNetLauncher
+from FeatureExtraction.Models.VGG16 import VGG16Launcher
+from FeatureExtraction.Models.VGG19 import VGG19Launcher
+from FeatureExtraction.Models.AlexNet import AlexNetLauncher
+from FeatureExtraction.Models.ResNet50 import ResNet50Launcher
+from FeatureExtraction.Models.Inception3 import Inception3Launcher
 
 
 # Static variables
 alexNetInputSize = 227
 
 
-modules = ['AlexNet', 'VGG19', 'InceptionV3', 'ResNet50']
+modules = ['AlexNet', 'InceptionV3', 'ResNet50', 'VGG16', 'VGG19']
 
 
 def getUserInput():
@@ -18,17 +22,19 @@ def getUserInput():
             'choices': modules
         },
     ]
-    userInputs = prompt(questions)
-    return userInputs
+    userInput = prompt(questions)
+    return userInput
 
 
 def featureExtractor(inputDirectory, outputDirectory):
-    userInputs = getUserInput()['Action']
-    if userInputs == 'AlexNet':
-        alexNetLauncher(alexNetInputSize)
-    elif userInputs == 'VGG19':
-        print('VGG19')
-    elif userInputs == 'InceptionV3':
-        print('InceptionV3')
-    elif userInputs == 'ResNet50':
-        print('ResNet50')
+    userInput = getUserInput()['Action']
+    if userInput == 'AlexNet':
+        AlexNetLauncher(alexNetInputSize)
+    elif userInput == 'VGG16':
+        VGG16Launcher()
+    elif userInput == 'VGG19':
+        VGG19Launcher()
+    elif userInput == 'InceptionV3':
+        Inception3Launcher()
+    elif userInput == 'ResNet50':
+        ResNet50Launcher()
