@@ -133,3 +133,7 @@ config.py
 
 # Generated Dataset files
 /Data/generated/output.csv
+
+# Extracted Features
+FeatureExtraction/Output/*
+!FeatureExtraction/Output/.gitkeep
