@@ -6,10 +6,6 @@ from FeatureExtraction.Models.ResNet50 import ResNet50Launcher
 from FeatureExtraction.Models.Inception3 import Inception3Launcher
 
 
-# Static variables
-alexNetInputSize = 227
-
-
 modules = ['AlexNet', 'InceptionV3', 'ResNet50', 'VGG16', 'VGG19']
 
 
@@ -29,7 +25,7 @@ def getUserInput():
 def featureExtractor(inputDirectory, outputDirectory):
     userInput = getUserInput()['Action']
     if userInput == 'AlexNet':
-        AlexNetLauncher(alexNetInputSize)
+        AlexNetLauncher()
     elif userInput == 'VGG16':
         VGG16Launcher()
     elif userInput == 'VGG19':

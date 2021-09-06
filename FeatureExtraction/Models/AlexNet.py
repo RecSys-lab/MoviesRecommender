@@ -3,6 +3,9 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D
 
+# Static variables
+alexNetInputSize = 227
+
 
 def skeletonBuilder(imageShape):
     print('\n🔥 Building AlexNet architecture ...')
@@ -60,7 +63,7 @@ def skeletonBuilder(imageShape):
                     optimizer='adam', metrics=['accuracy'])
 
 
-def AlexNetLauncher(inputSize):
-    imageShape = (inputSize, inputSize, 3)
+def AlexNetLauncher():
+    imageShape = (alexNetInputSize, alexNetInputSize, 3)
     np.random.seed(1000)  # Instantiate an empty model
     skeletonBuilder(imageShape)
