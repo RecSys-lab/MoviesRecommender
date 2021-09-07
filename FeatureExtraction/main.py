@@ -1,3 +1,4 @@
+from FeatureExtraction.utils import imagesDirectories
 from PyInquirer import prompt
 from FeatureExtraction.Models.VGG16 import VGG16Launcher
 from FeatureExtraction.Models.VGG19 import VGG19Launcher
@@ -23,6 +24,8 @@ def getUserInput():
 
 
 def featureExtractor(inputDirectory, outputDirectory):
+    # Fetcth the list of movie folder(s) containing frames
+    foldersList = imagesDirectories(inputDirectory)
     userInput = getUserInput()['Action']
     if userInput == 'AlexNet':
         AlexNetLauncher()
