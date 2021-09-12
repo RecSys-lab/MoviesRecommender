@@ -1,5 +1,5 @@
-from FeatureExtraction.utils import imagesDirectories
 from PyInquirer import prompt
+from FeatureExtraction.utils import imagesDirectories
 from FeatureExtraction.Models.VGG16 import VGG16Launcher
 from FeatureExtraction.Models.VGG19 import VGG19Launcher
 from FeatureExtraction.Models.AlexNet import AlexNetLauncher
@@ -32,7 +32,7 @@ def featureExtractor(inputDirectory, outputDirectory):
     elif userInput == 'VGG16':
         VGG16Launcher()
     elif userInput == 'VGG19':
-        VGG19Launcher()
+        VGG19Launcher(foldersList, outputDirectory)
     elif userInput == 'InceptionV3':
         Inception3Launcher()
     elif userInput == 'ResNet50':

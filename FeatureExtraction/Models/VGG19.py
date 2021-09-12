@@ -1,3 +1,7 @@
+import csv
+import glob
+import string
+import numpy as np
 from keras import Model
 from keras.applications.vgg19 import VGG19, preprocess_input
 from keras.preprocessing.image import load_img, img_to_array
@@ -8,25 +12,35 @@ from keras.preprocessing.image import load_img, img_to_array
 
 # Static variables
 vggInputSize = 224
-tempImage = 'E:\Datasets\For Test\Movie Frames\00000123\frame0000096.jpg'
 
 
-def VGG19Launcher():
-    # Load a frame and convert it into a numpy array
-    frame = load_img(tempImage, target_size=(vggInputSize, vggInputSize))
-    frame = img_to_array(frame)
-    # Reshape the image according to the model's structure
-    frame = frame.reshape((1, frame.shape[0], frame.shape[1], frame.shape[2]))
-    # Preprocessing
-    frame = preprocess_input(frame)
+def VGG19Launcher(foldersList: list, outputDirectory: string):
+    featuresList = []
     # Load model
     print('\n🚀 Launching VGG-19 network ...')
     model = VGG19()
     # Removing the final output layer, so that the second last fully connected layer with 4,096 nodes will be the new output layer
     model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
-    # Get extracted features
-    features = model.predict(frame)
-    print('🔥 Features are ready! Check the output path!')
-    print(features.shape)
-    # save to file
-    # dump(features, open('dog.pkl', 'wb'))
+
+    for imageFolder in foldersList:
+        for imageFile in glob.glob(f'{imageFolder}/*.jpg'):
+            # Load a frame and convert it into a numpy array
+            frame = load_img(imageFile, target_size=(
+                vggInputSize, vggInputSize))
+            frameData = img_to_array(frame)
+            frameData = np.expand_dims(frameData, axis=0)
+            # Preprocessing
+            frameData = preprocess_input(frameData)
+            # Reshape the image according to the model's structure
+            # frame = frame.reshape((1, frame.shape[0], frame.shape[1], frame.shape[2]))
+            # Get extracted features
+            features = model.predict(frameData)
+            featuresList.append(features)
+        print(f'Features extracted for {imageFolder}')
+
+    print(f'🔥 Features are ready! Check the output path! {features.shape}')
+    # Save to file
+    writer = csv.writer(open(outputDirectory, 'w+'))
+    writer.writerow(featuresList)
+    # open(outputDirectory, 'w+')  # Create file if doesn't exists
+    # featuresList.to_csv(outputDirectory, index=False)

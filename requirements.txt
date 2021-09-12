@@ -5,3 +5,4 @@ PyInquirer >= 1.0.3
 opencv-python >= 4.1.1
 tensorflow >= 2.6.0
 keras >= 2.6.0
+pillow >= 8.3
