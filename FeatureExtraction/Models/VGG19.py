@@ -1,4 +1,5 @@
 import csv
+import time
 import glob
 import string
 import numpy as np
@@ -12,35 +13,41 @@ from keras.preprocessing.image import load_img, img_to_array
 
 # Static variables
 vggInputSize = 224
+csvHeader = ['movieId', 'visualFeatures']
 
 
 def VGG19Launcher(foldersList: list, outputDirectory: string):
-    featuresList = []
+    startTime = time.time()
     # Load model
     print('\n🚀 Launching VGG-19 network ...')
     model = VGG19()
     # Removing the final output layer, so that the second last fully connected layer with 4,096 nodes will be the new output layer
     model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
 
-    for imageFolder in foldersList:
-        for imageFile in glob.glob(f'{imageFolder}/*.jpg'):
-            # Load a frame and convert it into a numpy array
-            frame = load_img(imageFile, target_size=(
-                vggInputSize, vggInputSize))
-            frameData = img_to_array(frame)
-            frameData = np.expand_dims(frameData, axis=0)
-            # Preprocessing
-            frameData = preprocess_input(frameData)
-            # Reshape the image according to the model's structure
-            # frame = frame.reshape((1, frame.shape[0], frame.shape[1], frame.shape[2]))
-            # Get extracted features
-            features = model.predict(frameData)
-            featuresList.append(features)
-        print(f'Features extracted for {imageFolder}')
+    # Preparing CSV file
+    outputFile = open(outputDirectory, 'w+', newline='')
 
-    print(f'🔥 Features are ready! Check the output path! {features.shape}')
-    # Save to file
-    writer = csv.writer(open(outputDirectory, 'w+'))
-    writer.writerow(featuresList)
-    # open(outputDirectory, 'w+')  # Create file if doesn't exists
-    # featuresList.to_csv(outputDirectory, index=False)
+    with outputFile:
+        writer = csv.DictWriter(outputFile, fieldnames=csvHeader)
+        writer.writeheader()
+
+        for imageFolder in foldersList:
+            movieId = imageFolder.rsplit('/', 1)[1]
+            for imageFile in glob.glob(f'{imageFolder}/*.jpg'):
+                # Load a frame and convert it into a numpy array
+                frame = load_img(imageFile, target_size=(
+                    vggInputSize, vggInputSize))
+                frameData = img_to_array(frame)
+                frameData = np.expand_dims(frameData, axis=0)
+                # Preprocessing
+                frameData = preprocess_input(frameData)
+                # Get extracted features
+                features = model.predict(frameData)
+                # featuresList.append(features)
+                writer.writerow({'movieId': movieId,
+                                 'visualFeatures': features})
+            print(f'Features extracted for {imageFolder}')
+
+        elapsedTime = int(time.time() - startTime)
+        print(
+            f'🔥 Features are ready! Check the output path! {features.shape} (it took {elapsedTime} seconds)')
