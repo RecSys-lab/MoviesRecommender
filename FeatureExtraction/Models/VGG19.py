@@ -2,6 +2,7 @@ import csv
 import time
 import glob
 import string
+import logging
 import numpy as np
 from keras import Model
 from keras.applications.vgg19 import VGG19, preprocess_input
@@ -17,9 +18,11 @@ csvHeader = ['movieId', 'visualFeatures']
 
 
 def VGG19Launcher(foldersList: list, outputDirectory: string):
+    logging.basicConfig(filename='features-logger.log')
     startTime = time.time()
     # Load model
     print('\n🚀 Launching VGG-19 network ...')
+    logging.info('Launching VGG-19 network ...')
     model = VGG19()
     # Removing the final output layer, so that the second last fully connected layer with 4,096 nodes will be the new output layer
     model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
@@ -51,3 +54,5 @@ def VGG19Launcher(foldersList: list, outputDirectory: string):
         elapsedTime = int(time.time() - startTime)
         print(
             f'🔥 Features are ready! Check the output path! {features.shape} (it took {elapsedTime} seconds)')
+        logging.info(
+            f'Features got ready in {features.shape} (took {elapsedTime} seconds)')

@@ -1,3 +1,5 @@
+import logging
+import datetime
 from PyInquirer import prompt
 from FeatureExtraction.utils import imagesDirectories
 from FeatureExtraction.Models.VGG16 import VGG16Launcher
@@ -24,6 +26,10 @@ def getUserInput():
 
 
 def featureExtractor(inputDirectory, outputDirectory):
+    # Create logging structure
+    logging.basicConfig(filename='features-logger.log', level=logging.INFO)
+    currentMoment = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    logging.info(f'\n[{currentMoment}] Starting Feature Extractor ...')
     # Fetcth the list of movie folder(s) containing frames
     foldersList = imagesDirectories(inputDirectory)
     userInput = getUserInput()['Action']

@@ -90,6 +90,4 @@ python ./main.py
 
 ## TODOs
 
-- Feature extractors (AlexNet, VGG, etc)
 - Code to find trailers of movies
-- Logging should be a callable component with time, message, and type
