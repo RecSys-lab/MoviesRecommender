@@ -14,12 +14,11 @@ from keras.preprocessing.image import load_img, img_to_array
 
 # Static variables
 vggInputSize = 224
-csvHeader = ['movieId', 'visualFeatures']
+csvHeader = ['movieId', 'frameId', 'visualFeatures']
 
 
 def VGG19Launcher(foldersList: list, outputDirectory: string):
     logging.basicConfig(filename='features-logger.log')
-    startTime = time.time()
     # Load model
     print('\n🚀 Launching VGG-19 network ...')
     logging.info('Launching VGG-19 network ...')
@@ -27,16 +26,18 @@ def VGG19Launcher(foldersList: list, outputDirectory: string):
     # Removing the final output layer, so that the second last fully connected layer with 4,096 nodes will be the new output layer
     model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
 
-    # Preparing CSV file
-    outputFile = open(outputDirectory, 'w+', newline='')
-
-    with outputFile:
-        writer = csv.DictWriter(outputFile, fieldnames=csvHeader)
-        writer.writeheader()
-
-        for imageFolder in foldersList:
-            movieId = imageFolder.rsplit('/', 1)[1]
+    for imageFolder in foldersList:
+        startTime = time.time()
+        movieId = imageFolder.rsplit('/', 1)[1]
+        # Preparing CSV file
+        outputFile = open(
+            f'{outputDirectory}/features_{movieId}.csv', 'w+', newline='')
+        with outputFile:
+            writer = csv.DictWriter(outputFile, fieldnames=csvHeader)
+            writer.writeheader()
             for imageFile in glob.glob(f'{imageFolder}/*.jpg'):
+                # Finding frameId by removing .jpg from the name
+                frameId = ('frame' + imageFile.rsplit('frame', 1)[1])[:-4]
                 # Load a frame and convert it into a numpy array
                 frame = load_img(imageFile, target_size=(
                     vggInputSize, vggInputSize))
@@ -48,11 +49,10 @@ def VGG19Launcher(foldersList: list, outputDirectory: string):
                 features = model.predict(frameData)
                 # featuresList.append(features)
                 writer.writerow({'movieId': movieId,
-                                 'visualFeatures': features})
-            print(f'Features extracted for {imageFolder}')
-
+                                 'frameId': frameId,
+                                'visualFeatures': features})
         elapsedTime = int(time.time() - startTime)
         print(
-            f'🔥 Features are ready! Check the output path! {features.shape} (it took {elapsedTime} seconds)')
+            f'🔥 Features are ready! Check {imageFolder}! {features.shape} (it took {elapsedTime} seconds)')
         logging.info(
-            f'Features got ready in {features.shape} (took {elapsedTime} seconds)')
+            f'Features got ready in {imageFolder} with overall shape {features.shape} (took {elapsedTime} seconds)')
