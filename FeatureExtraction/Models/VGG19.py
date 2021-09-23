@@ -31,7 +31,7 @@ def VGG19Launcher(foldersList: list, outputDirectory: string):
         movieId = imageFolder.rsplit('/', 1)[1]
         # Preparing CSV file
         outputFile = open(
-            f'{outputDirectory}/features_{movieId}.csv', 'w+', newline='')
+            f'{outputDirectory}\\features{movieId}.csv', 'w+', newline='')
         with outputFile:
             writer = csv.DictWriter(outputFile, fieldnames=csvHeader)
             writer.writeheader()
@@ -46,13 +46,13 @@ def VGG19Launcher(foldersList: list, outputDirectory: string):
                 # Preprocessing
                 frameData = preprocess_input(frameData)
                 # Get extracted features
+                np.set_printoptions(threshold=np.inf)
                 features = model.predict(frameData)
-                # featuresList.append(features)
                 writer.writerow({'movieId': movieId,
                                  'frameId': frameId,
-                                'visualFeatures': features})
+                                'visualFeatures': np.array(features[0])})
         elapsedTime = int(time.time() - startTime)
         print(
-            f'🔥 Features are ready! Check {imageFolder}! {features.shape} (it took {elapsedTime} seconds)')
+            f'🔥 Features saved in {outputFile.name} with overall shape {features.shape} (it took {elapsedTime} seconds)')
         logging.info(
-            f'Features got ready in {imageFolder} with overall shape {features.shape} (took {elapsedTime} seconds)')
+            f'Features saved in {outputFile.name} with overall shape {features.shape} (took {elapsedTime} seconds)')
