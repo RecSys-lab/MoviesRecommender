@@ -1,8 +1,5 @@
 import os
-
-
-def imageResizer(image, width, height):
-    print('imageResizer')
+import string
 
 
 # Creates a list of movie folder(s) containing extracted frame files
@@ -15,3 +12,21 @@ def imagesDirectories(foldersDirectory):
                            '/' + folder for folder in foldersList]
     print(f'Found {len(foldersListAbsolute)} item(s)!')
     return foldersListAbsolute
+
+
+# Checks if a folder with the same name of movieId exists or not, creates one if not
+def featuresFolderChecker(movieId: string, targetPath: string):
+    featuresfileName = f'{targetPath}/{movieId}'
+    # true means it has been processed before
+    checker = os.path.exists(featuresfileName)
+    if not checker:
+        os.mkdir(featuresfileName)
+    return checker
+
+
+# Creates a CSV file containing features
+def featuresFileCreator(movieId: string, targetPath: string, fileName: string):
+    featuresfilePath = f'{targetPath}/{movieId}/{fileName}.csv'
+    if not os.path.exists(featuresfilePath):
+        open(featuresfilePath, 'w+')
+    return featuresfilePath

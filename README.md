@@ -91,4 +91,3 @@ python ./main.py
 ## TODOs
 
 - Refactoring code and unifying some modules
-- Storing separate files for each visual features of frames

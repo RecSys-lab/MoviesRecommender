@@ -1,4 +1,4 @@
-import csv
+import os
 import time
 import glob
 import string
@@ -7,6 +7,7 @@ import numpy as np
 from keras import Model
 from keras.applications.vgg19 import VGG19, preprocess_input
 from keras.preprocessing.image import load_img, img_to_array
+from FeatureExtraction.utils import featuresFileCreator, featuresFolderChecker
 
 # About VGG-19:
 # Running the example will load the VGG16 model and download the model weights
@@ -27,14 +28,17 @@ def VGG19Launcher(foldersList: list, outputDirectory: string):
     model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
 
     for imageFolder in foldersList:
-        startTime = time.time()
         movieId = imageFolder.rsplit('/', 1)[1]
-        # Preparing CSV file
-        outputFile = open(
-            f'{outputDirectory}\\features{movieId}.csv', 'w+', newline='')
-        with outputFile:
-            writer = csv.DictWriter(outputFile, fieldnames=csvHeader)
-            writer.writeheader()
+        # Check if the folder with the same name of the movie containing features exists
+        movieFeaturesExists = featuresFolderChecker(movieId, outputDirectory)
+        if (movieFeaturesExists):
+            print(
+                f'🔥 Features were previously extracted in {outputDirectory}\\{movieId}')
+            logging.info(
+                f'Features were previously extracted in {outputDirectory}\\{movieId}')
+        else:
+            # Extract features
+            startTime = time.time()
             for imageFile in glob.glob(f'{imageFolder}/*.jpg'):
                 # Finding frameId by removing .jpg from the name
                 frameId = ('frame' + imageFile.rsplit('frame', 1)[1])[:-4]
@@ -46,13 +50,13 @@ def VGG19Launcher(foldersList: list, outputDirectory: string):
                 # Preprocessing
                 frameData = preprocess_input(frameData)
                 # Get extracted features
-                np.set_printoptions(threshold=np.inf)
                 features = model.predict(frameData)
-                writer.writerow({'movieId': movieId,
-                                 'frameId': frameId,
-                                'visualFeatures': np.array(features[0])})
-        elapsedTime = int(time.time() - startTime)
-        print(
-            f'🔥 Features saved in {outputFile.name} with overall shape {features.shape} (it took {elapsedTime} seconds)')
-        logging.info(
-            f'Features saved in {outputFile.name} with overall shape {features.shape} (took {elapsedTime} seconds)')
+                # Exporting
+                featuresfilePath = featuresFileCreator(
+                    movieId, outputDirectory, frameId)
+                np.savetxt(featuresfilePath, features[0], delimiter=', ')
+            elapsedTime = int(time.time() - startTime)
+            print(
+                f'🔥 Features saved in {outputDirectory} with overall shape {features.shape} (it took {elapsedTime} seconds)')
+            logging.info(
+                f'Features saved in {outputDirectory} with overall shape {features.shape} (took {elapsedTime} seconds)')
