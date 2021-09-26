@@ -15,7 +15,6 @@ from FeatureExtraction.utils import featuresFileCreator, featuresFolderChecker
 
 # Static variables
 vggInputSize = 224
-csvHeader = ['movieId', 'frameId', 'visualFeatures']
 
 
 def VGG19Launcher(foldersList: list, outputDirectory: string):
