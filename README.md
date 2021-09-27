@@ -1,5 +1,7 @@
 # MoviesRecommender
 
+![MoviesRecommender](https://github.com/RecSys-lab/MoviesRecommender/blob/main/_contents/cover.jpg "MoviesRecommender")
+
 This repository contains utilities that provide the ability to generate a visual content-based full-length movie dataset.
 
 ## ☑️ Prerequisites
