@@ -17,7 +17,7 @@ from FeatureExtraction.utils import featuresFileCreator, featuresFolderChecker
 vggInputSize = 224
 
 
-def VGG19Launcher(foldersList: list, outputDirectory: string):
+def VGG19Launcher(foldersList: list, outputDirectory: string, packetSize: int):
     logging.basicConfig(filename='features-logger.log')
     # Load model
     print('\n🚀 Launching VGG-19 network ...')

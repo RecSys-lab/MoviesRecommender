@@ -8,9 +8,10 @@ movieLenzRatings = 'C:/Some/Path/ratings.csv'
 # Frames
 moviesDirectory = 'C:/Some/Path/'
 outputDirectory = 'C:/Some/Path/'
+networkInputSize = 420  # The width of the extracted frames
 
 # Feature Extraction
-networkInputSize = 420  # The width of the extracted frames
+packetSize = 25  # Each 25 frames are considered as a packet
 imagesDirectory = 'C:/Some/Path/'
 extractedFeaturesDirectory = 'C:/Some/Path/'
 

@@ -3,7 +3,7 @@ from Data.main import dataProcess
 from Recommendation.main import recommendation
 from Frames.frameExtractor import frameExtractor
 from FeatureExtraction.main import featureExtractor
-from config import moviesList, movieLenzRatings, generatedDataset, moviesDirectory, outputDirectory, networkInputSize, imagesDirectory, extractedFeaturesDirectory
+from config import moviesList, movieLenzRatings, generatedDataset, moviesDirectory, outputDirectory, networkInputSize, imagesDirectory, extractedFeaturesDirectory, packetSize
 
 modules = ['Dataset Generator', 'Video Frame Extraction',
            'Visual Feature Extraction', 'Recommendation']
@@ -33,7 +33,8 @@ def __init__():
         frameExtractor(moviesDirectory, outputDirectory, networkInputSize)
     elif userInputs == 'Visual Feature Extraction':
         # arguments: (input directory, output directory)
-        featureExtractor(imagesDirectory, extractedFeaturesDirectory)
+        featureExtractor(
+            imagesDirectory, extractedFeaturesDirectory, packetSize)
     elif userInputs == 'Recommendation':
         # arguments: ()
         recommendation()

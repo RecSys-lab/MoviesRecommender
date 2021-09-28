@@ -1,5 +1,6 @@
 import logging
 import datetime
+import string
 from PyInquirer import prompt
 from FeatureExtraction.utils import imagesDirectories
 from FeatureExtraction.Models.VGG19 import VGG19Launcher
@@ -23,7 +24,7 @@ def getUserInput():
     return userInput
 
 
-def featureExtractor(inputDirectory, outputDirectory):
+def featureExtractor(inputDirectory: string, outputDirectory: string, packetSize: int):
     # Create logging structure
     logging.basicConfig(filename='features-logger.log', level=logging.INFO)
     currentMoment = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -34,6 +35,6 @@ def featureExtractor(inputDirectory, outputDirectory):
     if userInput == 'AlexNet':
         AlexNetLauncher()
     elif userInput == 'VGG19':
-        VGG19Launcher(foldersList, outputDirectory)
+        VGG19Launcher(foldersList, outputDirectory, packetSize)
     elif userInput == 'InceptionV3':
         Inception3Launcher()
