@@ -30,3 +30,16 @@ def featuresFileCreator(movieId: string, targetPath: string, fileName: string):
     if not os.path.exists(featuresfilePath):
         open(featuresfilePath, 'w+')
     return featuresfilePath
+
+
+# Manages the contents of a packet and sends a signal whether to reset the counter or not
+def packetManager(packetCounter: int, packetSize: int, packetIndex: int, movieId: string, targetPath: string) -> bool:
+    if (packetCounter < packetSize):
+        return False
+    else:
+        formatedPacketIndex = '{0:04d}'.format(packetIndex)
+        packetName = f'packet{formatedPacketIndex}'
+        print(f'Saving {packetName} for movie {movieId} ...')
+        featuresfilePath = featuresFileCreator(
+            movieId, targetPath, packetName)
+        return True

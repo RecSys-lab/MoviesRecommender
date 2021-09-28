@@ -7,7 +7,7 @@ import numpy as np
 from keras import Model
 from keras.applications.vgg19 import VGG19, preprocess_input
 from keras.preprocessing.image import load_img, img_to_array
-from FeatureExtraction.utils import featuresFileCreator, featuresFolderChecker
+from FeatureExtraction.utils import featuresFileCreator, featuresFolderChecker, packetManager
 
 # About VGG-19:
 # Running the example will load the VGG16 model and download the model weights
@@ -38,6 +38,8 @@ def VGG19Launcher(foldersList: list, outputDirectory: string, packetSize: int):
         else:
             # Extract features
             startTime = time.time()
+            packetCounter = 0
+            packetIndex = 1  # Holds the name of the packet, e.g. Packet1
             for imageFile in glob.glob(f'{imageFolder}/*.jpg'):
                 # Finding frameId by removing .jpg from the name
                 frameId = ('frame' + imageFile.rsplit('frame', 1)[1])[:-4]
@@ -54,6 +56,12 @@ def VGG19Launcher(foldersList: list, outputDirectory: string, packetSize: int):
                 featuresfilePath = featuresFileCreator(
                     movieId, outputDirectory, frameId)
                 np.savetxt(featuresfilePath, features[0], delimiter=', ')
+                packetCounter += 1
+                resetCounter = packetManager(
+                    packetCounter, packetSize, packetIndex, movieId, outputDirectory)
+                if (resetCounter):
+                    packetCounter = 0
+                    packetIndex += 1
             elapsedTime = int(time.time() - startTime)
             print(
                 f'🔥 Features saved in {outputDirectory} with overall shape {features.shape} (it took {elapsedTime} seconds)')
