@@ -92,4 +92,6 @@ python ./main.py
 
 ## TODOs
 
-- Refactoring code and unifying some modules
+- [feat] Refactoring code and unifying some modules
+- [bug] Features array are truncated when storing on CSV
+- [bug] Last items in a packet are not counted
