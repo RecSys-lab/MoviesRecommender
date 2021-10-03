@@ -1,13 +1,13 @@
-import os
 import time
 import glob
 import string
 import logging
 import numpy as np
+import pandas as pd
 from keras import Model
 from keras.applications.vgg19 import VGG19, preprocess_input
 from keras.preprocessing.image import load_img, img_to_array
-from FeatureExtraction.utils import featuresFileCreator, featuresFolderChecker, packetManager
+from FeatureExtraction.utils import featuresFolderChecker, packetManager
 
 # About VGG-19:
 # Running the example will load the VGG16 model and download the model weights
@@ -38,8 +38,10 @@ def VGG19Launcher(foldersList: list, outputDirectory: string, packetSize: int):
         else:
             # Extract features
             startTime = time.time()
+            # Used to be compared to packetSize, so that all x items saved into one file
             packetCounter = 0
-            packetIndex = 1  # Holds the name of the packet, e.g. Packet1
+            packetIndex = 1  # Holds the name of the packet, e.g. Packet0001
+            dataFrame = pd.DataFrame(columns=['frameId', 'features'])
             for imageFile in glob.glob(f'{imageFolder}/*.jpg'):
                 # Finding frameId by removing .jpg from the name
                 frameId = ('frame' + imageFile.rsplit('frame', 1)[1])[:-4]
@@ -52,14 +54,19 @@ def VGG19Launcher(foldersList: list, outputDirectory: string, packetSize: int):
                 frameData = preprocess_input(frameData)
                 # Get extracted features
                 features = model.predict(frameData)
-                # Exporting
-                featuresfilePath = featuresFileCreator(
-                    movieId, outputDirectory, frameId)
-                np.savetxt(featuresfilePath, features[0], delimiter=', ')
+                # Avoid storing floats with many digits
+                normalizedFeatures = np.round(features[0], 6)
+                # Append rows to dataFrame
+                dataFrame = dataFrame.append(
+                    {'frameId': frameId, 'features': normalizedFeatures}, ignore_index=True)
                 packetCounter += 1
-                resetCounter = packetManager(
-                    packetCounter, packetSize, packetIndex, movieId, outputDirectory)
-                if (resetCounter):
+                resetCounter = packetCounter < packetSize
+                if (not resetCounter):
+                    # Save dataFrame as packet in a file
+                    packetManager(packetIndex, dataFrame,
+                                  movieId, outputDirectory)
+                    # Clear dataFrame rows
+                    dataFrame.drop(dataFrame.index, inplace=True)
                     packetCounter = 0
                     packetIndex += 1
             elapsedTime = int(time.time() - startTime)

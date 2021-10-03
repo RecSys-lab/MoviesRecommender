@@ -1,6 +1,8 @@
 import os
 import string
 
+from pandas.core.frame import DataFrame
+
 
 # Creates a list of movie folder(s) containing extracted frame files
 def imagesDirectories(foldersDirectory):
@@ -33,13 +35,10 @@ def featuresFileCreator(movieId: string, targetPath: string, fileName: string):
 
 
 # Manages the contents of a packet and sends a signal whether to reset the counter or not
-def packetManager(packetCounter: int, packetSize: int, packetIndex: int, movieId: string, targetPath: string) -> bool:
-    if (packetCounter < packetSize):
-        return False
-    else:
-        formatedPacketIndex = '{0:04d}'.format(packetIndex)
-        packetName = f'packet{formatedPacketIndex}'
-        print(f'Saving {packetName} for movie {movieId} ...')
-        featuresfilePath = featuresFileCreator(
-            movieId, targetPath, packetName)
-        return True
+def packetManager(packetIndex: int, dataFrame: DataFrame, movieId: string, targetPath: string) -> bool:
+    formatedPacketIndex = '{0:04d}'.format(packetIndex)
+    packetName = f'packet{formatedPacketIndex}'
+    print(f'Saving {packetName} for movie {movieId} ...')
+    featuresfilePath = featuresFileCreator(
+        movieId, targetPath, packetName)
+    dataFrame.to_csv(featuresfilePath, sep='\t', encoding='utf-8', index=False)
