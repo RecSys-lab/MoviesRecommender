@@ -92,6 +92,7 @@ python ./main.py
 
 ## TODOs
 
+- [feat] Using a unified logger for all modules
 - [feat] Refactoring code and unifying some modules
 - [bug] Features array are truncated when storing on CSV
 - [bug] Last items in a packet are not counted
