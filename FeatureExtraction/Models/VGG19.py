@@ -1,3 +1,4 @@
+import os
 import time
 import glob
 import string
@@ -38,6 +39,8 @@ def VGG19Launcher(foldersList: list, outputDirectory: string, packetSize: int):
         else:
             # Extract features
             startTime = time.time()
+            # Initially, the whole number of frames
+            remainingNumberOfFrames = len(os.listdir(imageFolder))
             # Used to be compared to packetSize, so that all x items saved into one file
             packetCounter = 0
             packetIndex = 1  # Holds the name of the packet, e.g. Packet0001
@@ -54,14 +57,15 @@ def VGG19Launcher(foldersList: list, outputDirectory: string, packetSize: int):
                 frameData = preprocess_input(frameData)
                 # Get extracted features
                 features = model.predict(frameData)
-                # Avoid storing floats with many digits
-                normalizedFeatures = np.round(features[0], 6)
                 # Append rows to dataFrame
                 dataFrame = dataFrame.append(
-                    {'frameId': frameId, 'features': normalizedFeatures}, ignore_index=True)
+                    {'frameId': frameId, 'features': features[0]}, ignore_index=True)
                 packetCounter += 1
-                resetCounter = packetCounter < packetSize
-                if (not resetCounter):
+                # Reset the counter only if packetCounter reaches the limit (packetSize) and there is no more frames for process
+                remainingNumberOfFrames -= 1
+                resetCounter = (packetCounter == packetSize) or (
+                    remainingNumberOfFrames == 0)
+                if (resetCounter):
                     # Save dataFrame as packet in a file
                     packetManager(packetIndex, dataFrame,
                                   movieId, outputDirectory)

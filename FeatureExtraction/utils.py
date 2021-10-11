@@ -28,7 +28,7 @@ def featuresFolderChecker(movieId: string, targetPath: string):
 
 # Creates a CSV file containing features
 def featuresFileCreator(movieId: string, targetPath: string, fileName: string):
-    featuresfilePath = f'{targetPath}/{movieId}/{fileName}.csv'
+    featuresfilePath = f'{targetPath}/{movieId}/{fileName}.json'
     if not os.path.exists(featuresfilePath):
         open(featuresfilePath, 'w+')
     return featuresfilePath
@@ -41,4 +41,5 @@ def packetManager(packetIndex: int, dataFrame: DataFrame, movieId: string, targe
     print(f'Saving {packetName} for movie {movieId} ...')
     featuresfilePath = featuresFileCreator(
         movieId, targetPath, packetName)
-    dataFrame.to_csv(featuresfilePath, sep='\t', encoding='utf-8', index=False)
+    dataFrame.to_json(featuresfilePath, orient="records",
+                      double_precision=6)
