@@ -37,4 +37,4 @@ def featureExtractor(inputDirectory: string, outputDirectory: string, packetSize
     elif userInput == 'VGG19':
         VGG19Launcher(foldersList, outputDirectory, packetSize)
     elif userInput == 'InceptionV3':
-        Inception3Launcher()
+        Inception3Launcher(foldersList, outputDirectory, packetSize)
