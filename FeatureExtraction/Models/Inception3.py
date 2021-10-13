@@ -12,12 +12,6 @@ vggInputSize = 299
 
 
 def Inception3Launcher(foldersList: list, outputDirectory: str, packetSize: int):
-    print('\n🔥 Launching Inception-v3 architecture ...')
-    model = InceptionV3()
-    # Show a summary
-    print('\n🚀 Inception-v3 is ready! Check the sumamry:')
-    model.summary()
-
     logging.basicConfig(filename='features-logger.log')
     # Load model
     print('\n🚀 Launching Inception-v3 network ...')
