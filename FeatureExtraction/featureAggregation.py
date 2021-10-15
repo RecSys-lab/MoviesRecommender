@@ -4,13 +4,14 @@ import glob
 import json
 import logging
 import numpy as np
+import pandas as pd
 
 
 def featureAggregation(featureFoldersList: list, outputDirectory: str):
     for featuresFolder in featureFoldersList:
         movieId = featuresFolder.rsplit('/', 1)[1]
         # Check if the file with the same name of the movie containing aggregated features exists
-        aggregatedFile = f'{outputDirectory}/{movieId}.txt'
+        aggregatedFile = f'{outputDirectory}/{movieId}.json'
         # true means it has been processed before
         isAggregated = os.path.isfile(aggregatedFile)
         if (isAggregated):
@@ -22,6 +23,9 @@ def featureAggregation(featureFoldersList: list, outputDirectory: str):
             startTime = time.time()
             # Read packet JSON files
             numberOfPackets = len(os.listdir(featuresFolder))
+            # Arrays to store each movie's columns altogether
+            maxMovieAggregatedFeatures = []
+            meanMovieAggregatedFeatures = []
             packetCounter = 0
             print(
                 f'Processing {numberOfPackets} packets of the movie "{movieId}" ...')
@@ -30,11 +34,45 @@ def featureAggregation(featureFoldersList: list, outputDirectory: str):
                 jsonFile = open(packetFile,)
                 packetData = json.load(jsonFile)
                 packetCounter += 1
+                # Arrays to store each packet's columns altogether
+                packetAggregatedFeatures = []
+                # Iterate on each frames of array
                 for frameData in packetData:
                     features = frameData['features']
                     features = np.asarray(features)
-                print(f'Packet #{packetCounter} has been processed!', features)
+                    packetAggregatedFeatures.append(features)
+                # Using the packet-level aggregated array for max/mean calculations
+                meanPacketAggregatedFeatures = np.mean(
+                    packetAggregatedFeatures, axis=0)
+                maxPacketAggregatedFeatures = np.max(
+                    packetAggregatedFeatures, axis=0)
+                meanPacketAggregatedFeatures = np.round(
+                    meanPacketAggregatedFeatures, 6)
+                maxPacketAggregatedFeatures = np.round(
+                    maxPacketAggregatedFeatures, 6)
+                # Append them to movie-level aggregation
+                maxMovieAggregatedFeatures.append(maxPacketAggregatedFeatures)
+                meanMovieAggregatedFeatures.append(
+                    meanPacketAggregatedFeatures)
+                if (packetCounter % 25 == 0):
+                    print(f'Packet #{packetCounter} has been processed!')
+            # Using the movie-level aggregated array for max/mean calculations
+            maxMovieAggregatedFeatures = np.mean(
+                maxMovieAggregatedFeatures, axis=0)
+            meanMovieAggregatedFeatures = np.max(
+                meanMovieAggregatedFeatures, axis=0)
+            maxMovieAggregatedFeatures = np.round(
+                maxMovieAggregatedFeatures, 6)
+            meanMovieAggregatedFeatures = np.round(
+                meanMovieAggregatedFeatures, 6)
+            # Save aggregated arrays in files
+            dataFrame = pd.DataFrame(columns=['Max', 'Mean'])
+            dataFrame = dataFrame.append(
+                {'Max': maxMovieAggregatedFeatures, 'Mean': meanMovieAggregatedFeatures}, ignore_index=True)
+            dataFrame.to_json(
+                f'{outputDirectory}/{movieId}.json', orient="records")
+            elapsedTime = int(time.time() - startTime)
             print(
-                f'✔️ Finished processing the packets of movie "{movieId}"')
+                f'✔️ Finished aggregating the packets of movie "{movieId}" in {elapsedTime} seconds.')
             logging.info(
-                f'Finished processing the packets of movie "{movieId}"')
+                f'Finished aggregating the packets of movie "{movieId}" in {elapsedTime} seconds.')

@@ -17,7 +17,7 @@ def Inception3Launcher(foldersList: list, outputDirectory: str, packetSize: int)
     print('\n🚀 Launching Inception-v3 network ...')
     logging.info('Launching Inception-v3 network ...')
     model = InceptionV3()
-    # Removing the final output layer, so that the second last fully connected layer with 4,096 nodes will be the new output layer
+    # Removing the final output layer, so that the second last fully connected layer with 2,048 nodes will be the new output layer
     model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
     modelRunner(foldersList, outputDirectory, packetSize,
                 vggInputSize, model, preprocess_input)
