@@ -1,6 +1,5 @@
 import logging
 import datetime
-import string
 from PyInquirer import prompt
 from FeatureExtraction.utils import SubdirectoryExtractor
 from FeatureExtraction.Models.VGG19 import VGG19Launcher
@@ -25,7 +24,7 @@ def getUserInput():
     return userInput
 
 
-def featureExtractor(movieFramesDirectory: string, movieFeaturesDirectory: string, packetSize: int):
+def featureExtractor(movieFramesDirectory: str, movieFeaturesDirectory: str, aggregatedFeaturesDirectory: str, packetSize: int):
     # Create logging structure
     logging.basicConfig(filename='features-logger.log', level=logging.INFO)
     currentMoment = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -42,4 +41,4 @@ def featureExtractor(movieFramesDirectory: string, movieFeaturesDirectory: strin
         # Fetcth the list of movie folder(s) containing packets
         packetsFoldersList = SubdirectoryExtractor(movieFeaturesDirectory)
         # Aggregates all features for each movie and produces a CSV file
-        featureAggregation(packetsFoldersList)
+        featureAggregation(packetsFoldersList, aggregatedFeaturesDirectory)

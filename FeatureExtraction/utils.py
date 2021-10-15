@@ -1,6 +1,4 @@
 import os
-import string
-
 from pandas.core.frame import DataFrame
 
 
@@ -17,7 +15,7 @@ def SubdirectoryExtractor(foldersDirectory):
 
 
 # Checks if a folder with the same name of movieId exists or not, creates one if not
-def featuresFolderChecker(movieId: string, targetPath: string):
+def featuresFolderChecker(movieId: str, targetPath: str):
     featuresfileName = f'{targetPath}/{movieId}'
     # true means it has been processed before
     checker = os.path.exists(featuresfileName)
@@ -26,8 +24,16 @@ def featuresFolderChecker(movieId: string, targetPath: string):
     return checker
 
 
+# Checks if a file with the same name of movieId exists or not
+def aggregatedFileChecker(movieId: str, targetPath: str, fileType: str):
+    aggregatedFile = f'{targetPath}/{movieId}.{fileType}'
+    # true means it has been processed before
+    checker = os.path.isfile(aggregatedFile)
+    return checker
+
+
 # Creates a CSV file containing features
-def featuresFileCreator(movieId: string, targetPath: string, fileName: string):
+def featuresFileCreator(movieId: str, targetPath: str, fileName: str):
     featuresfilePath = f'{targetPath}/{movieId}/{fileName}.json'
     if not os.path.exists(featuresfilePath):
         open(featuresfilePath, 'w+')
@@ -35,7 +41,7 @@ def featuresFileCreator(movieId: string, targetPath: string, fileName: string):
 
 
 # Manages the contents of a packet and sends a signal whether to reset the counter or not
-def packetManager(packetIndex: int, dataFrame: DataFrame, movieId: string, targetPath: string) -> bool:
+def packetManager(packetIndex: int, dataFrame: DataFrame, movieId: str, targetPath: str) -> bool:
     formatedPacketIndex = '{0:04d}'.format(packetIndex)
     packetName = f'packet{formatedPacketIndex}'
     print(f'Saving {packetName} for movie {movieId} ...')
