@@ -4,11 +4,12 @@ import string
 from PyInquirer import prompt
 from FeatureExtraction.utils import imagesDirectories
 from FeatureExtraction.Models.VGG19 import VGG19Launcher
-from FeatureExtraction.Models.AlexNet import AlexNetLauncher
 from FeatureExtraction.Models.Inception3 import Inception3Launcher
+from FeatureExtraction.featureAggregation import featureAggregation
 
 
-modules = ['AlexNet', 'InceptionV3', 'VGG19']
+modules = ['Feature Extraction - InceptionV3',
+           'Feature Extraction - VGG19', 'Feature Aggeration']
 
 
 def getUserInput():
@@ -16,7 +17,7 @@ def getUserInput():
         {
             'type': 'list',
             'name': 'Action',
-            'message': 'Select a feature extraction model from the list below:',
+            'message': 'Select an action from the list below:',
             'choices': modules
         },
     ]
@@ -32,9 +33,10 @@ def featureExtractor(inputDirectory: string, outputDirectory: string, packetSize
     # Fetcth the list of movie folder(s) containing frames
     foldersList = imagesDirectories(inputDirectory)
     userInput = getUserInput()['Action']
-    if userInput == 'AlexNet':
-        AlexNetLauncher()
-    elif userInput == 'VGG19':
+    if userInput == 'Feature Extraction - VGG19':
         VGG19Launcher(foldersList, outputDirectory, packetSize)
-    elif userInput == 'InceptionV3':
+    elif userInput == 'Feature Extraction - InceptionV3':
         Inception3Launcher(foldersList, outputDirectory, packetSize)
+    elif userInput == 'Feature Aggeration':
+        # Aggregates all features for each movie and produces a CSV file
+        featureAggregation(outputDirectory)
