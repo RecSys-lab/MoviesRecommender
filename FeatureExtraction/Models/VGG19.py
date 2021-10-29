@@ -1,5 +1,5 @@
-import logging
 from keras import Model
+from utils import logger
 from FeatureExtraction.modelRunner import modelRunner
 from keras.applications.vgg19 import VGG19, preprocess_input
 
@@ -13,10 +13,8 @@ vggInputSize = 224
 
 
 def VGG19Launcher(foldersList: list, outputDirectory: str, packetSize: int):
-    logging.basicConfig(filename='features-logger.log')
     # Load model
-    print('\n🚀 Launching VGG-19 network ...')
-    logging.info('Launching VGG-19 network ...')
+    logger('Launching VGG-19 network ...')
     model = VGG19()
     # Removing the final output layer, so that the second last fully connected layer with 4,096 nodes will be the new output layer
     model = Model(inputs=model.inputs, outputs=model.layers[-2].output)

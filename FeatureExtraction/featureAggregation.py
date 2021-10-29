@@ -2,9 +2,9 @@ import os
 import time
 import glob
 import json
-import logging
 import numpy as np
 import pandas as pd
+from utils import logger
 
 
 def featureAggregation(featureFoldersList: list, outputDirectory: str):
@@ -17,8 +17,6 @@ def featureAggregation(featureFoldersList: list, outputDirectory: str):
         if (isAggregated):
             print(
                 f'🔥 Features were previously aggregated for {movieId}')
-            logging.info(
-                f'Features were previously aggregated for {movieId}')
         else:
             startTime = time.time()
             # Read packet JSON files
@@ -71,8 +69,6 @@ def featureAggregation(featureFoldersList: list, outputDirectory: str):
                 {'Max': maxMovieAggregatedFeatures, 'Mean': meanMovieAggregatedFeatures}, ignore_index=True)
             dataFrame.to_json(
                 f'{outputDirectory}/{movieId}.json', orient="records")
-            elapsedTime = int(time.time() - startTime)
-            print(
-                f'✔️ Finished aggregating the packets of movie "{movieId}" in {elapsedTime} seconds.')
-            logging.info(
-                f'Finished aggregating the packets of movie "{movieId}" in {elapsedTime} seconds.')
+            elapsedTime = '{:.2f}'.format(time.time() - startTime)
+            logger(
+                f'✔️ Finished aggregating packets of movie "{movieId}" in {elapsedTime} seconds.')

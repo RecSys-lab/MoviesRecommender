@@ -1,9 +1,9 @@
 import os
 import time
 import glob
-import logging
 import numpy as np
 import pandas as pd
+from utils import logger
 from keras.preprocessing.image import load_img, img_to_array
 from FeatureExtraction.utils import featuresFolderChecker, packetManager
 
@@ -16,8 +16,6 @@ def modelRunner(foldersList: list, outputDirectory: str, packetSize: int, inputS
         if (movieFeaturesExists):
             print(
                 f'🔥 Features were previously extracted in {outputDirectory}\\{movieId}')
-            logging.info(
-                f'Features were previously extracted in {outputDirectory}\\{movieId}')
         else:
             # Extract features
             startTime = time.time()
@@ -55,8 +53,6 @@ def modelRunner(foldersList: list, outputDirectory: str, packetSize: int, inputS
                     dataFrame.drop(dataFrame.index, inplace=True)
                     packetCounter = 0
                     packetIndex += 1
-            elapsedTime = int(time.time() - startTime)
-            print(
-                f'🔥 Features saved in {outputDirectory} with overall shape {features.shape} (it took {elapsedTime} seconds)')
-            logging.info(
-                f'Features saved in {outputDirectory} with overall shape {features.shape} (took {elapsedTime} seconds)')
+            elapsedTime = '{:.2f}'.format(time.time() - startTime)
+            logger(
+                f'Features saved in {outputDirectory} with overall shape {features.shape} in {elapsedTime}')
