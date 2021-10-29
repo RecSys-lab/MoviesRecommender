@@ -1,38 +1,22 @@
-import logging
-import datetime
 import pandas as pd
+from utils import logger
 
 
 def datasetGenerator(moviesList, movieLenzRatings, generatedDataset):
-    # Create logging structure
-    logging.basicConfig(filename='data-logger.log', level=logging.INFO)
-    currentMoment = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logging.info(f'\n[{currentMoment}] Starting Dataset Generator')
-
+    logger('Dataset Generator started ...')
     print('Reading dataset files ...')
     movies = pd.read_csv(moviesList)
-    print(f'Dataset loaded with {len(movies)} instances (movies)')
-    logging.info(f'Number of videos: {len(movies)}')
+    logger(f'Dataset loaded with {len(movies)} movies')
 
     print('Reading ratings files from MovieLenz ...')
     ratings = pd.read_csv(movieLenzRatings)
-    print(f'Ratings loaded with {len(ratings)} instances (user ratings)')
-    logging.info(
-        f'Ratings loaded with {len(ratings)} instances (user ratings)')
+    logger(f'Ratings loaded with {len(ratings)} instances (user ratings)')
 
     print('Joining files on the field MovieId ...')
     jointItems = movies.merge(ratings, on='movieId')
-
-    # --- Note: CSV movieId doesn't keep the 10-digits format, so we should normalize the name ---
-    # for index in movies.iterrows():
-    #     print(index)
-    # userId = '1'
-    # print(userId.rjust(10, '0'))
 
     print(f'Exporting to {generatedDataset} ...')
     open(generatedDataset, 'w+')  # Create file if doesn't exists
     jointItems.to_csv(generatedDataset, index=False)
 
-    print('Finished generating dataset!')
-    currentMoment = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logging.info(f'[{currentMoment}] Finished generating dataset!')
+    logger(f'Finished generating dataset in {generatedDataset}')

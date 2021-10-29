@@ -1,3 +1,5 @@
+import logging
+from utils import logger
 from PyInquirer import prompt
 from Data.main import dataProcess
 from Recommendation.main import recommendation
@@ -23,7 +25,10 @@ def getUserInput():
 
 
 def __init__():
-    print('Hi! Welcome to the MovieRecommender utilities 🚀')
+    # Creating log file
+    logging.basicConfig(filename='logger.log', level=logging.INFO)
+    logger('Framework started!')
+    # Getting inputs from users
     userInputs = getUserInput()['Action']
     if userInputs == 'Dataset Generator':
         # arguments: (list of movies in CSV, MovieLenz rating file path, output path)

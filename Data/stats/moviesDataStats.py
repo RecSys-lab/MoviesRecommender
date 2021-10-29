@@ -1,7 +1,6 @@
-import logging
-import datetime
 import numpy as np
 import pandas as pd
+from utils import logger
 import matplotlib.pyplot as plt
 
 
@@ -29,19 +28,11 @@ def genreStats(genres):
 
 
 def moviesDataStats(moviesFilePath):
-    print('Creating report based on movies data ...')
-    print('Reading dataset files ...')
-    # Create logging structure
-    logging.basicConfig(filename='data-logger.log', level=logging.INFO)
-    currentMoment = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logging.info(
-        f'\n[{currentMoment}] Starting Data Analyzer (Movies metadata)')
+    logger('Movies Dataset Analyzer started ...')
     movies = pd.read_csv(moviesFilePath)
     # Genres
     genres = genreStats(movies['genre'])
-    print('Genres: ', genres)
-    logging.info(f'\nGenres: {genres}')
+    logger('Genres: ', genres)
     total = sum(genres.values())
     genrePerMovie = float("{:.2f}".format(total/len(movies)))
-    print(f'Total: {total:,} (genres per movie is {genrePerMovie})')
-    logging.info(f'Total: {total:,} (genres per movie is {genrePerMovie})')
+    logger(f'Total: {total:,} (genres per movie is {genrePerMovie})')
