@@ -92,5 +92,4 @@ python ./main.py
 
 ## TODOs
 
-- [feat] Using a unified logger for all modules
 - [feat] Refactoring code and unifying some modules
