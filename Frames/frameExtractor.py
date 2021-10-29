@@ -2,26 +2,21 @@ import os
 import cv2
 import time
 import string
-import logging
-import datetime
+from utils import logger
 from Frames.resizeTools.frameResize import frameResize
 
 
 # This module extracts frames from a given list of movies
 def frameExtractor(moviesDirectory, outputDirectory, networkInputSize):
+    logger('Frame Extraction started ...')
     print(f'Fetching the list of items in "{moviesDirectory}"')
-    # Create logging structure
-    logging.basicConfig(filename='frame-logger.log', level=logging.INFO)
-    currentMoment = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logging.info(f'\n[{currentMoment}] Frames Extractor Started!')
     try:
         videoFiles = os.listdir(moviesDirectory)
         # Filter only video files
         for file in videoFiles:
             if not file.lower().endswith(('.mkv', '.avi', '.mp4')):
                 videoFiles.remove(file)
-        print(f'Number of videos: {len(videoFiles)}\n')
-        logging.info(f'Number of videos: {len(videoFiles)}')
+        logger(f'Number of videos to process: {len(videoFiles)}')
         # Iterate on all video files in the given directory
         for file in videoFiles:
             print(f'Processing video {file} ...')
@@ -37,8 +32,6 @@ def frameExtractor(moviesDirectory, outputDirectory, networkInputSize):
                 # os.mkdir(generatedPath)
                 print(
                     f'Skipping movie {file} as its folder already exists!\n')
-                logging.info(
-                    f'Skipping movie {file} as its folder already exists!')
             else:
                 os.mkdir(generatedPath)
                 # Capturing video
@@ -72,23 +65,20 @@ def frameExtractor(moviesDirectory, outputDirectory, networkInputSize):
                                 f'Processing frame #{frameCounter} ({currentTime:,} seconds passed) ...')
                         frameCounter += 1
                     # Finished extracting frames
-                    elapsedTime = int(time.time() - startTime)
+                    elapsedTime = '{:.2f}'.format(time.time() - startTime)
                     print(
-                        f'Frames generated for {normalizedVideoName} in {generatedPath} (it took {elapsedTime} seconds)')
-                    logging.info(
-                        f'Frames generated for {normalizedVideoName} in {generatedPath} (it took {elapsedTime} seconds)')
+                        f'Extracted {frameCounter} frames of {normalizedVideoName} in {elapsedTime} seconds!')
                 except cv2.error as openCVError:
-                    print('🚨 Error while processing video:', str(openCVError))
-                    logging.error(
-                        f'Error while processing video {openCVError}')
+                    errorText = str(openCVError)
+                    logger(
+                        f'Error while processing video: {errorText}', logLevel="error")
                 except Exception as otherError:
-                    print('🚨 Error while running the app:', str(otherError))
-                    logging.error(f'Error while running the app: {otherError}')
+                    errorText = str(otherError)
+                    logger(
+                        f'Error while running the app: {errorText}', logLevel="error")
     except FileNotFoundError:
-        print(
-            "🚨 [FileNotFoundError] The input directory does not exist or contain video files!")
-        logging.error(
-            f'The input directory does not exist or contain video files!')
-    except Exception as e:
-        print('🚨 Error while running the app:', str(e))
-        logging.error(f'Error while running the app: {e}')
+        logger(
+            f'The input directory does not exist or contain video files!', logLevel="error")
+    except Exception as error:
+        errorText = str(error)
+        logger(f'Error while running the app ({errorText})', logLevel="error")
