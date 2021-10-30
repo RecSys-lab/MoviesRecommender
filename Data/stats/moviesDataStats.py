@@ -33,7 +33,7 @@ def moviesDataStats():
     movies = pd.read_csv(moviesListCSV)
     # Genres
     genres = genreStats(movies['genre'])
-    logger('Genres: ', genres)
+    logger(f'Genres: {genres}')
     total = sum(genres.values())
     genrePerMovie = float("{:.2f}".format(total/len(movies)))
     logger(f'Total: {total:,} (genres per movie is {genrePerMovie})')
