@@ -5,13 +5,14 @@ import json
 import numpy as np
 import pandas as pd
 from utils import logger
+from config import aggFeaturesDir
 
 
-def featureAggregation(featureFoldersList: list, outputDirectory: str):
+def featureAggregation(featureFoldersList: list):
     for featuresFolder in featureFoldersList:
         movieId = featuresFolder.rsplit('/', 1)[1]
         # Check if the file with the same name of the movie containing aggregated features exists
-        aggregatedFile = f'{outputDirectory}/{movieId}.json'
+        aggregatedFile = f'{aggFeaturesDir}/{movieId}.json'
         # true means it has been processed before
         isAggregated = os.path.isfile(aggregatedFile)
         if (isAggregated):
@@ -68,7 +69,7 @@ def featureAggregation(featureFoldersList: list, outputDirectory: str):
             dataFrame = dataFrame.append(
                 {'Max': maxMovieAggregatedFeatures, 'Mean': meanMovieAggregatedFeatures}, ignore_index=True)
             dataFrame.to_json(
-                f'{outputDirectory}/{movieId}.json', orient="records")
+                f'{aggFeaturesDir}/{movieId}.json', orient="records")
             elapsedTime = '{:.2f}'.format(time.time() - startTime)
             logger(
-                f'✔️ Finished aggregating packets of movie "{movieId}" in {elapsedTime} seconds.')
+                f'Finished aggregating packets of movie "{movieId}" in {elapsedTime} seconds.')

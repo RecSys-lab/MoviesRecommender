@@ -1,11 +1,12 @@
 import pandas as pd
 from utils import logger
+from config import moviesListCSV, generatedListCSV, movieLenzRatings
 
 
-def datasetGenerator(moviesList, movieLenzRatings, generatedDataset):
+def datasetGenerator():
     logger('Dataset Generator started ...')
     print('Reading dataset files ...')
-    movies = pd.read_csv(moviesList)
+    movies = pd.read_csv(moviesListCSV)
     logger(f'Dataset loaded with {len(movies)} movies')
 
     print('Reading ratings files from MovieLenz ...')
@@ -15,8 +16,8 @@ def datasetGenerator(moviesList, movieLenzRatings, generatedDataset):
     print('Joining files on the field MovieId ...')
     jointItems = movies.merge(ratings, on='movieId')
 
-    print(f'Exporting to {generatedDataset} ...')
-    open(generatedDataset, 'w+')  # Create file if doesn't exists
-    jointItems.to_csv(generatedDataset, index=False)
+    print(f'Exporting to {generatedListCSV} ...')
+    open(generatedListCSV, 'w+')  # Create file if doesn't exists
+    jointItems.to_csv(generatedListCSV, index=False)
 
-    logger(f'Finished generating dataset in {generatedDataset}')
+    logger(f'Finished generating dataset in {generatedListCSV}')

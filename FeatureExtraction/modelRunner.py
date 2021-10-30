@@ -4,18 +4,19 @@ import glob
 import numpy as np
 import pandas as pd
 from utils import logger
+from config import featuresDir, packetSize
 from keras.preprocessing.image import load_img, img_to_array
 from FeatureExtraction.utils import featuresFolderChecker, packetManager
 
 
-def modelRunner(foldersList: list, outputDirectory: str, packetSize: int, inputSize: int, model, preprocess_input):
+def modelRunner(foldersList: list, inputSize: int, model, preprocess_input):
     for imageFolder in foldersList:
         movieId = imageFolder.rsplit('/', 1)[1]
         # Check if the folder with the same name of the movie containing features exists
-        movieFeaturesExists = featuresFolderChecker(movieId, outputDirectory)
+        movieFeaturesExists = featuresFolderChecker(movieId, featuresDir)
         if (movieFeaturesExists):
             print(
-                f'🔥 Features were previously extracted in {outputDirectory}\\{movieId}')
+                f'🔥 Features were previously extracted in {featuresDir}\\{movieId}')
         else:
             # Extract features
             startTime = time.time()
@@ -48,11 +49,11 @@ def modelRunner(foldersList: list, outputDirectory: str, packetSize: int, inputS
                 if (resetCounter):
                     # Save dataFrame as packet in a file
                     packetManager(packetIndex, dataFrame,
-                                  movieId, outputDirectory)
+                                  movieId, featuresDir)
                     # Clear dataFrame rows
                     dataFrame.drop(dataFrame.index, inplace=True)
                     packetCounter = 0
                     packetIndex += 1
             elapsedTime = '{:.2f}'.format(time.time() - startTime)
             logger(
-                f'Features saved in {outputDirectory} with overall shape {features.shape} in {elapsedTime}')
+                f'Features saved in {featuresDir} with overall shape {features.shape} in {elapsedTime}')

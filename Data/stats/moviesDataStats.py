@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from utils import logger
 import matplotlib.pyplot as plt
+from config import moviesListCSV
 
 
 def genreStats(genres):
@@ -27,9 +28,9 @@ def genreStats(genres):
     return countResults
 
 
-def moviesDataStats(moviesFilePath):
+def moviesDataStats():
     logger('Movies Dataset Analyzer started ...')
-    movies = pd.read_csv(moviesFilePath)
+    movies = pd.read_csv(moviesListCSV)
     # Genres
     genres = genreStats(movies['genre'])
     logger('Genres: ', genres)

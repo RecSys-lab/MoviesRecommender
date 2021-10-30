@@ -12,11 +12,10 @@ from keras.applications.vgg19 import VGG19, preprocess_input
 vggInputSize = 224
 
 
-def VGG19Launcher(foldersList: list, outputDirectory: str, packetSize: int):
+def VGG19Launcher(foldersList: list):
     # Load model
     logger('Launching VGG-19 network ...')
     model = VGG19()
     # Removing the final output layer, so that the second last fully connected layer with 4,096 nodes will be the new output layer
     model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
-    modelRunner(foldersList, outputDirectory, packetSize,
-                vggInputSize, model, preprocess_input)
+    modelRunner(foldersList, vggInputSize, model, preprocess_input)

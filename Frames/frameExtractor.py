@@ -3,15 +3,16 @@ import cv2
 import time
 import string
 from utils import logger
-from Frames.resizeTools.frameResize import frameResize
+from Frames.utils import frameResize
+from config import moviesDir, framesDir, networkInputSize
 
 
 # This module extracts frames from a given list of movies
-def frameExtractor(moviesDirectory, outputDirectory, networkInputSize):
+def frameExtractor():
     logger('Frame Extraction started ...')
-    print(f'Fetching the list of items in "{moviesDirectory}"')
+    print(f'Fetching the list of items in "{moviesDir}"')
     try:
-        videoFiles = os.listdir(moviesDirectory)
+        videoFiles = os.listdir(moviesDir)
         # Filter only video files
         for file in videoFiles:
             if not file.lower().endswith(('.mkv', '.avi', '.mp4')):
@@ -21,12 +22,12 @@ def frameExtractor(moviesDirectory, outputDirectory, networkInputSize):
         for file in videoFiles:
             print(f'Processing video {file} ...')
             # Accessing video and provide a proper name for it
-            currentVideoPath = f'{moviesDirectory}/{file}'
+            currentVideoPath = f'{moviesDir}/{file}'
             normalizedVideoName = file.split('.')
             normalizedVideoName = string.capwords(
                 normalizedVideoName[0].replace("_", "")).replace(" ", "")
             # Creating output folder
-            generatedPath = outputDirectory + '/' + normalizedVideoName
+            generatedPath = framesDir + '/' + normalizedVideoName
             # Do not re-generate frames for movies if there is a folder with their normalized name
             if os.path.exists(generatedPath):
                 # os.mkdir(generatedPath)
@@ -55,7 +56,7 @@ def frameExtractor(moviesDirectory, outputDirectory, networkInputSize):
                                 fileNameCounter)
                             # Save the frame as a file
                             cv2.imwrite(
-                                f"{outputDirectory}/{normalizedVideoName}/frame{formattedFrameCounter}.jpg", image)
+                                f"{framesDir}/{normalizedVideoName}/frame{formattedFrameCounter}.jpg", image)
                             fileNameCounter += 1
                         success, image = capturedVideo.read()
                         # Showing progress

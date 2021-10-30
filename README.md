@@ -61,23 +61,23 @@ You can find a **config.example.py** in the root directory. What you need to do 
 import os
 
 # Dataset Generation
-moviesList = 'C:/Some/Path/Dataset.csv'
-generatedDataset = os.path.abspath('./Data/generated/output.csv')
+moviesListCSV = 'C:/Some/Path/Dataset.csv'
+generatedListCSV = os.path.abspath('./Data/generated/output.csv')
 movieLenzRatings = 'C:/Some/Path/ratings.csv'
 
 # Feature Extraction
 networkInputSize = 420
-moviesDirectory = 'C:/Some/Path/'
-outputDirectory = 'C:/Some/Path/'
+moviesDir = 'C:/Some/Path/'
+framesDir = 'C:/Some/Path/'
 ```
 
 As you can see, you need to specify some paths and settings for both **Dataset Generation** and **Feature Extraction** modules:
 
-- **moviesList:** The path to the dataset.csv file that contains data of the collected movies
-- **generatedDataset:** The path where the output dataset should be generated
+- **moviesListCSV:** The path to the dataset.csv file that contains data of the collected movies
+- **generatedListCSV:** The path where the output dataset should be generated
 - **movieLenzRatings:** The path to the MovieLenz ratings file
-- **moviesDirectory:** The directory that contains a set of movie files
-- **outputDirectory:** The folder to hold directories of the extracted frames
+- **moviesDir:** The directory that contains a set of movie files
+- **framesDir:** The folder to hold directories of the extracted frames
 - **networkInputSize:** The width of the extracted frames (height will be calculated by the system based on video's aspect-ratio)
 
 Please note that the **config.py** is placed in `.gitignore` file due to the customized settings.
@@ -89,7 +89,3 @@ After providing the configurations, you can easily run the app using the command
 ```python
 python ./main.py
 ```
-
-## TODOs
-
-- [feat] Refactoring code and unifying some modules

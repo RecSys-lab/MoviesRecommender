@@ -1,7 +1,8 @@
 from utils import logger
 from PyInquirer import prompt
-from FeatureExtraction.utils import SubdirectoryExtractor
+from config import framesDir, featuresDir
 from FeatureExtraction.Models.VGG19 import VGG19Launcher
+from FeatureExtraction.utils import SubdirectoryExtractor
 from FeatureExtraction.Models.Inception3 import Inception3Launcher
 from FeatureExtraction.featureAggregation import featureAggregation
 
@@ -23,18 +24,17 @@ def getUserInput():
     return userInput
 
 
-def featureExtractor(movieFramesDirectory: str, movieFeaturesDirectory: str, aggregatedFeaturesDirectory: str, packetSize: int):
+def featureExtractor():
     logger('Starting Feature Extractor ...')
     # Fetcth the list of movie folder(s) containing frames
-    framesFoldersList = SubdirectoryExtractor(movieFramesDirectory)
+    framesFoldersList = SubdirectoryExtractor(framesDir)
     userInput = getUserInput()['Action']
     if userInput == 'Feature Extraction - VGG19':
-        VGG19Launcher(framesFoldersList, movieFeaturesDirectory, packetSize)
+        VGG19Launcher(framesFoldersList)
     elif userInput == 'Feature Extraction - InceptionV3':
-        Inception3Launcher(framesFoldersList,
-                           movieFeaturesDirectory, packetSize)
+        Inception3Launcher(framesFoldersList)
     elif userInput == 'Feature Aggeration':
         # Fetcth the list of movie folder(s) containing packets
-        packetsFoldersList = SubdirectoryExtractor(movieFeaturesDirectory)
+        packetsFoldersList = SubdirectoryExtractor(featuresDir)
         # Aggregates all features for each movie and produces a CSV file
-        featureAggregation(packetsFoldersList, aggregatedFeaturesDirectory)
+        featureAggregation(packetsFoldersList)

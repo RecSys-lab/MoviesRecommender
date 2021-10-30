@@ -1,6 +1,7 @@
 import pandas as pd
 from utils import logger
 import matplotlib.pyplot as plt
+from config import generatedListCSV
 
 
 def plotHistogram(data, title, xLable, yLabel):
@@ -11,10 +12,10 @@ def plotHistogram(data, title, xLable, yLabel):
     plt.show()
 
 
-def generatedDataStats(generatedFilePath):
+def generatedDataStats():
     logger('Generated Dataset Analyzer started ...')
     print('Creating report from the generated dataset ...')
-    generated = pd.read_csv(generatedFilePath)
+    generated = pd.read_csv(generatedListCSV)
     numberOfRows = len(generated)
     # Reporting
     logger(f'Number of ratings: {numberOfRows:,}')
