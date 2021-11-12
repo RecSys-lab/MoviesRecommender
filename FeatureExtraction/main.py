@@ -1,3 +1,4 @@
+import os
 from utils import logger
 from PyInquirer import prompt
 from config import framesDir, featuresDir
@@ -28,6 +29,10 @@ def featureExtractor():
     logger('Starting Feature Extractor ...')
     # Fetcth the list of movie folder(s) containing frames
     framesFoldersList = SubdirectoryExtractor(framesDir)
+    # Create a folder for outputs if not existed
+    if not os.path.exists(featuresDir):
+        os.mkdir(featuresDir)
+    # Get action from user
     userInput = getUserInput()['Action']
     if userInput == 'Feature Extraction - VGG19':
         VGG19Launcher(framesFoldersList)

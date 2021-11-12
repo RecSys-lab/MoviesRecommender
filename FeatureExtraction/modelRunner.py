@@ -4,22 +4,23 @@ import glob
 import numpy as np
 import pandas as pd
 from utils import logger
-from config import featuresDir, packetSize
+from config import packetSize
 from keras.preprocessing.image import load_img, img_to_array
 from FeatureExtraction.utils import featuresFolderChecker, packetManager
 
 
-def modelRunner(foldersList: list, inputSize: int, model, preprocess_input):
+def modelRunner(outputPath: str, foldersList: list, inputSize: int, model, preprocess_input):
     for imageFolder in foldersList:
         movieId = imageFolder.rsplit('/', 1)[1]
         # Check if the folder with the same name of the movie containing features exists
-        movieFeaturesExists = featuresFolderChecker(movieId, featuresDir)
+        movieFeaturesExists = featuresFolderChecker(movieId, outputPath)
         if (movieFeaturesExists):
             print(
-                f'🔥 Features were previously extracted in {featuresDir}\\{movieId}')
+                f'Features were previously extracted in {outputPath}\\{movieId}')
         else:
             # Extract features
             startTime = time.time()
+            fearuesCounter = len(os.listdir(imageFolder))
             # Initially, the whole number of frames
             remainingNumberOfFrames = len(os.listdir(imageFolder))
             # Used to be compared to packetSize, so that all x items saved into one file
@@ -52,7 +53,7 @@ def modelRunner(foldersList: list, inputSize: int, model, preprocess_input):
                     if (resetCounter):
                         # Save dataFrame as packet in a file
                         packetManager(packetIndex, dataFrame,
-                                      movieId, featuresDir)
+                                      movieId, outputPath)
                         # Clear dataFrame rows
                         dataFrame.drop(dataFrame.index, inplace=True)
                         packetCounter = 0
@@ -64,4 +65,4 @@ def modelRunner(foldersList: list, inputSize: int, model, preprocess_input):
                     continue
             elapsedTime = '{:.2f}'.format(time.time() - startTime)
             logger(
-                f'Features saved in {featuresDir} with overall shape {features.shape} in {elapsedTime}')
+                f'Extracted {fearuesCounter}x{features.shape} features ({packetIndex-1} packets) from {movieId} in {elapsedTime} seconds!')

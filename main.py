@@ -5,7 +5,6 @@ from Data.main import dataProcess
 from Recommendation.main import recommendation
 from Frames.frameExtractor import frameExtractor
 from FeatureExtraction.main import featureExtractor
-from config import moviesDir, framesDir, networkInputSize, framesDir, featuresDir, aggFeaturesDir, packetSize
 
 modules = ['Dataset Generator', 'Video Frame Extraction',
            'Visual Feature Extraction', 'Recommendation']
@@ -35,10 +34,8 @@ def __init__():
     elif userInputs == 'Video Frame Extraction':
         frameExtractor()
     elif userInputs == 'Visual Feature Extraction':
-        featureExtractor(
-            framesDir, featuresDir, aggFeaturesDir, packetSize)
+        featureExtractor()
     elif userInputs == 'Recommendation':
-        # arguments: ()
         recommendation()
 
 
