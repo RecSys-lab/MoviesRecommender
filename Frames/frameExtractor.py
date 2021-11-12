@@ -2,9 +2,12 @@ import os
 import cv2
 import time
 import string
+from glob import glob
 from utils import logger
 from Frames.utils import frameResize
 from config import moviesDir, framesDir, networkInputSize
+
+videoTypes = ('mkv', 'avi', 'mp4')
 
 
 # This module extracts frames from a given list of movies
@@ -12,32 +15,32 @@ def frameExtractor():
     logger('Frame Extraction started ...')
     print(f'Fetching the list of items in "{moviesDir}"')
     try:
-        videoFiles = os.listdir(moviesDir)
-        # Filter only video files
-        for file in videoFiles:
-            if not file.lower().endswith(('.mkv', '.avi', '.mp4')):
-                videoFiles.remove(file)
+        # Create a folder for outputs if not existed
+        if not os.path.exists(framesDir):
+            os.mkdir(framesDir)
+        # Get the list of movies in the movies directory
+        videoFiles = []
+        for type in videoTypes:
+            videoFiles.extend(glob(f'{moviesDir}/*.{type}'))
         logger(f'Number of videos to process: {len(videoFiles)}')
         # Iterate on all video files in the given directory
         for file in videoFiles:
-            print(f'Processing video {file} ...')
+            fileName = os.path.basename(file)
+            print(f'Processing video "{fileName}" ...')
             # Accessing video and provide a proper name for it
-            currentVideoPath = f'{moviesDir}/{file}'
-            normalizedVideoName = file.split('.')
             normalizedVideoName = string.capwords(
-                normalizedVideoName[0].replace("_", "")).replace(" ", "")
+                fileName.split('.')[0].replace("_", "")).replace(" ", "")
             # Creating output folder
             generatedPath = framesDir + '/' + normalizedVideoName
             # Do not re-generate frames for movies if there is a folder with their normalized name
             if os.path.exists(generatedPath):
-                # os.mkdir(generatedPath)
                 print(
                     f'Skipping movie {file} as its folder already exists!\n')
             else:
                 os.mkdir(generatedPath)
                 # Capturing video
                 try:
-                    capturedVideo = cv2.VideoCapture(currentVideoPath)
+                    capturedVideo = cv2.VideoCapture(file)
                     frameRate = int(capturedVideo.get(cv2.CAP_PROP_FPS))
                     success, image = capturedVideo.read()
                     # Calculating the aspect-ratio
