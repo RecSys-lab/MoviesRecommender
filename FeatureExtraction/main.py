@@ -1,7 +1,8 @@
 import os
+from glob import glob
 from utils import logger
 from PyInquirer import prompt
-from config import framesDir, featuresDir
+from config import framesDir, featuresDir, aggFeaturesDir
 from FeatureExtraction.Models.VGG19 import VGG19Launcher
 from FeatureExtraction.utils import SubdirectoryExtractor
 from FeatureExtraction.Models.Inception3 import Inception3Launcher
@@ -25,6 +26,22 @@ def getUserInput():
     return userInput
 
 
+def selectFolder():
+    # Show only folders inside the featuresDir (e.g., VGG19, Incp3)
+    featuresFolders = glob(f'{featuresDir}/*/')
+    choices = [os.path.dirname(folder).split('\\')[-1]
+               for folder in featuresFolders]
+    possibilities = [
+        {
+            'type': 'list',
+            'name': 'Action',
+            'message': 'Select from which model you want to take the extracted features:',
+            'choices': choices
+        },
+    ]
+    return prompt(possibilities)
+
+
 def featureExtractor():
     logger('Starting Feature Extractor ...')
     # Fetcth the list of movie folder(s) containing frames
@@ -39,7 +56,17 @@ def featureExtractor():
     elif userInput == 'Feature Extraction - InceptionV3':
         Inception3Launcher(framesFoldersList)
     elif userInput == 'Feature Aggeration':
-        # Fetcth the list of movie folder(s) containing packets
-        packetsFoldersList = SubdirectoryExtractor(featuresDir)
+        # Create a folder for outputs if not existed
+        if not os.path.exists(aggFeaturesDir):
+            os.mkdir(aggFeaturesDir)
+        # Prompt the user with folder associated with the models
+        selectedFolder = selectFolder()['Action']
+        aggFolder = f'{aggFeaturesDir}/{selectedFolder}'
+        # Fetch the list of folder(s) containing packets
+        packetsFoldersList = SubdirectoryExtractor(
+            f'{featuresDir}/{selectedFolder}')
+        # Create a folder for outputs if not existed
+        if not os.path.exists(aggFolder):
+            os.mkdir(aggFolder)
         # Aggregates all features for each movie and produces a CSV file
-        featureAggregation(packetsFoldersList)
+        featureAggregation(packetsFoldersList, aggFolder)
