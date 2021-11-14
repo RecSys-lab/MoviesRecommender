@@ -133,6 +133,7 @@ config.py
 
 # Generated Dataset files
 /Data/generated/output.csv
+/Data/generated/downloadLinks.csv
 
 # Extracted Features
 FeatureExtraction/Output/*
