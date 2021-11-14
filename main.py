@@ -5,9 +5,11 @@ from Data.main import dataProcess
 from Recommendation.main import recommendation
 from Frames.frameExtractor import frameExtractor
 from FeatureExtraction.main import featureExtractor
+from TrailerDownloader.main import trailersDownloader
+
 
 modules = ['Dataset Generator', 'Video Frame Extraction',
-           'Visual Feature Extraction', 'Recommendation']
+           'Visual Feature Extraction', 'Trailers Downloader', 'Recommendation']
 
 
 def getUserInput():
@@ -35,6 +37,8 @@ def __init__():
         frameExtractor()
     elif userInputs == 'Visual Feature Extraction':
         featureExtractor()
+    elif userInputs == 'Trailers Downloader':
+        trailersDownloader()
     elif userInputs == 'Recommendation':
         recommendation()
 
