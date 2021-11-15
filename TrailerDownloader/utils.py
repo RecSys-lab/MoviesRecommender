@@ -1,7 +1,9 @@
 import os
+import time
 import pandas as pd
 from utils import logger
-from config import moviesListCSV, movieLenzYouTubeDir
+from pytube import YouTube
+from config import trailersDir, moviesListCSV, movieLenzYouTubeDir
 
 
 def loadYouTubeLinks():
@@ -74,3 +76,36 @@ def downloadDataFrameGenerator(moviesList, youtubeLinks):
         errorText = str(error)
         logger(
             f'Error while creating the download dataframe: {errorText}', logLevel="error")
+
+
+def youtubeDownloader(movieId: str, link: str):
+    """
+    Downloads a given YouTube link and saves it to the disk
+    Parameters
+    ----------
+    movieId: str
+        The ID of the movie (trailer)
+    link: str
+        The YouTube link to download
+    """
+    # Check if the video already exists
+    if os.path.exists(f'{trailersDir}/{movieId}.mp4'):
+        logger(
+            f'Skipping, as the video {movieId}.mp4 already exists!', logLevel="warning")
+        return
+    fixedLengthMovieId = str(movieId).zfill(10)
+    print(f'Downloading the trailer for movie "{fixedLengthMovieId}" ...')
+    try:
+        startTime = time.time()
+        # Create a YouTybe object
+        youtubeVideo = YouTube(link)
+        # Download the video
+        youtubeVideo.streams.filter(progressive=True, file_extension='mp4').order_by(
+            'resolution').asc().first().download(output_path=trailersDir, filename=f'{fixedLengthMovieId}.mp4')
+        elapsedTime = '{:.2f}'.format(time.time() - startTime)
+        logger(
+            f'Download finished for the trailer "{fixedLengthMovieId}" in {elapsedTime} seconds!')
+    except Exception as error:
+        errorText = str(error)
+        logger(
+            f'Error while downloading the file {fixedLengthMovieId}.mp4 ({errorText})', logLevel="error")

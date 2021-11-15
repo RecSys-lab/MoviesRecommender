@@ -1,6 +1,7 @@
-import pandas as pd
+import os
 from utils import logger
-from TrailerDownloader.utils import downloadDataFrameGenerator, loadCollectedMovies, loadYouTubeLinks
+from config import trailersDir
+from TrailerDownloader.utils import downloadDataFrameGenerator, loadCollectedMovies, loadYouTubeLinks, youtubeDownloader
 
 
 def trailersDownloader():
@@ -15,3 +16,11 @@ def trailersDownloader():
         return
     # Create the download dataframe
     downloadDataFrame = downloadDataFrameGenerator(moviesList, youtubeLinks)
+    if (downloadDataFrame is None):
+        return
+    # Create a folder for outputs if not existed
+    if not os.path.exists(trailersDir):
+        os.mkdir(trailersDir)
+    # Download the trailers
+    [youtubeDownloader(movieId, youtubeLink) for movieId, youtubeLink in zip(
+        downloadDataFrame['movieId'], downloadDataFrame['youtubeLink'])]
