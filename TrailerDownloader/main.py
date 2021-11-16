@@ -24,5 +24,17 @@ def trailersDownloader():
     # Download the trailers
     [youtubeDownloader(movieId, youtubeLink) for movieId, youtubeLink in zip(
         downloadDataFrame['movieId'], downloadDataFrame['youtubeLink'])]
-    # Log finished
-    # Save unfound videos
+    # Finished Downloading
+    logger('Downloading process has been finished!')
+    # Now, generating the list of movies not listed in the CSV file
+    moviesNotListed = moviesList[~moviesList['movieId'].isin(
+        downloadDataFrame['movieId'])]
+    # Check if there are any movies not listed in the CSV file
+    if (len(moviesNotListed) > 0):
+        logger(f'{len(moviesNotListed)} movies not listed in the CSV file!')
+        # Saving not listed movies
+        filePath = os.path.abspath('./Data/generated/moviesWithNoLinks.csv')
+        moviesNotListed[['movieId', 'title']].to_csv(filePath, index=False)
+        logger(
+            f'Saved the dataframe containing not-listed movies into {filePath}!')
+    logger('Trailers Downloader Finished!')
