@@ -88,13 +88,13 @@ def youtubeDownloader(movieId: str, link: str):
     link: str
         The YouTube link to download
     """
-    # Check if the video already exists
-    if os.path.exists(f'{trailersDir}/{movieId}.mp4'):
-        logger(
-            f'Skipping, as the video {movieId}.mp4 already exists!', logLevel="warning")
-        return
     fixedLengthMovieId = str(movieId).zfill(10)
     print(f'Downloading the trailer for movie "{fixedLengthMovieId}" ...')
+    # Check if the video already exists
+    if os.path.exists(f'{trailersDir}/{fixedLengthMovieId}.mp4'):
+        print(
+            f'Skipping, as the video {fixedLengthMovieId}.mp4 already exists!')
+        return
     try:
         startTime = time.time()
         # Create a YouTybe object

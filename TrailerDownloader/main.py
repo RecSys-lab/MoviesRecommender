@@ -24,3 +24,5 @@ def trailersDownloader():
     # Download the trailers
     [youtubeDownloader(movieId, youtubeLink) for movieId, youtubeLink in zip(
         downloadDataFrame['movieId'], downloadDataFrame['youtubeLink'])]
+    # Log finished
+    # Save unfound videos
