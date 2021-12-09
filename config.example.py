@@ -15,6 +15,7 @@ packetSize = 25  # Each 25 frames are considered as a packet
 # 1) Where the features should be stored, 2) Where to read feature folders for aggregation
 featuresDir = 'C:/Some/Path/'
 aggFeaturesDir = 'C:/Some/Path/'
+shotsDir = 'C:/Some/Path/'
 
 # Trailers Downloader
 movieLenzYouTubeDir = 'C:/Some/Path/'

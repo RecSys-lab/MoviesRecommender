@@ -2,15 +2,16 @@ import os
 from glob import glob
 from utils import logger
 from PyInquirer import prompt
-from config import framesDir, featuresDir, aggFeaturesDir
+from FeatureExtraction.shotDetection import shotDetection
 from FeatureExtraction.Models.VGG19 import VGG19Launcher
 from FeatureExtraction.utils import SubdirectoryExtractor
 from FeatureExtraction.Models.Inception3 import Inception3Launcher
 from FeatureExtraction.featureAggregation import featureAggregation
+from config import framesDir, featuresDir, aggFeaturesDir, shotsDir
 
 
 modules = ['Feature Extraction - InceptionV3',
-           'Feature Extraction - VGG19', 'Feature Aggeration']
+           'Feature Extraction - VGG19', 'Shot Detection', 'Feature Aggeration']
 
 
 def getUserInput():
@@ -55,18 +56,23 @@ def featureExtractor():
         VGG19Launcher(framesFoldersList)
     elif userInput == 'Feature Extraction - InceptionV3':
         Inception3Launcher(framesFoldersList)
-    elif userInput == 'Feature Aggeration':
+    elif userInput == 'Feature Aggeration' or userInput == 'Shot Detection':
+        # Get the proper folder in a temporary variable
+        tempDir = shotsDir if userInput == 'Shot Detection' else aggFeaturesDir
         # Create a folder for outputs if not existed
-        if not os.path.exists(aggFeaturesDir):
-            os.mkdir(aggFeaturesDir)
+        if not os.path.exists(tempDir):
+            os.mkdir(tempDir)
         # Prompt the user with folder associated with the models
         selectedFolder = selectFolder()['Action']
-        aggFolder = f'{aggFeaturesDir}/{selectedFolder}'
+        tempFolder = f'{tempDir}/{selectedFolder}'
+        # Create a folder for outputs if not existed
+        if not os.path.exists(tempFolder):
+            os.mkdir(tempFolder)
         # Fetch the list of folder(s) containing packets
         packetsFoldersList = SubdirectoryExtractor(
             f'{featuresDir}/{selectedFolder}')
-        # Create a folder for outputs if not existed
-        if not os.path.exists(aggFolder):
-            os.mkdir(aggFolder)
-        # Aggregates all features for each movie and produces a CSV file
-        featureAggregation(packetsFoldersList, aggFolder)
+        # Call proper function
+        if userInput == 'Shot Detection':
+            shotDetection(packetsFoldersList, tempFolder)
+        elif userInput == 'Feature Aggeration':
+            featureAggregation(packetsFoldersList, tempFolder)

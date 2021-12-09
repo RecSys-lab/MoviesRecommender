@@ -8,6 +8,20 @@ from utils import logger
 
 
 def featureAggregation(featureFoldersList: list, aggFolder: str):
+    """
+    Aggregates all features in the featureFoldersList into one csv file.
+
+    Parameters
+    ----------
+    featureFoldersList : list
+        List of feature folders.
+    aggFolder : str
+        Path to the folder where the aggregated features will be saved.
+
+    Returns
+    -------
+    None.
+    """
     for featuresFolder in featureFoldersList:
         movieId = featuresFolder.rsplit('/', 1)[1]
         # Check if the file with the same name of the movie containing aggregated features exists
