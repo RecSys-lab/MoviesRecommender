@@ -4,7 +4,7 @@ import time
 import string
 from glob import glob
 from utils import logger
-from Frames.utils import frameResize
+from FramesExtraction.utils import frameResize
 from config import moviesDir, framesDir, networkInputSize
 
 videoTypes = ('mkv', 'avi', 'mp4')

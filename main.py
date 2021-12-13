@@ -3,9 +3,9 @@ from utils import logger
 from PyInquirer import prompt
 from Data.main import dataProcess
 from Recommendation.main import recommendation
-from Frames.frameExtractor import frameExtractor
 from FeatureExtraction.main import featureExtractor
 from TrailerDownloader.main import trailersDownloader
+from FramesExtraction.frameExtractor import frameExtractor
 
 
 modules = ['Dataset Generator', 'Video Frame Extraction',

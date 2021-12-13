@@ -5,8 +5,7 @@ import pandas as pd
 from glob import glob
 from utils import logger
 from scipy import spatial
-import matplotlib.pyplot as plt
-from config import featuresDir, shotBoundaryThreshold
+from config import shotBoundaryThreshold
 from FeatureExtraction.utils import featuresFolderChecker
 
 
@@ -66,15 +65,26 @@ def shotDetection(featureFoldersList: list, shotFolder: str):
                     'source': featuresDF['frameId'][index],
                     'destination': featuresDF['frameId'][index + 1],
                     'similarity': similarity}, ignore_index=True)
-            # similarityDF.to_csv(
-            #     f'{shotFolder}/{movieId}.csv', index=False)
+            # Save the similarity dataframe
+            similarityDF.to_csv(
+                f'{shotFolder}/{movieId}/_FramesSimilarity.csv', index=False)
             # Plotting the histogram of the similarity values
-            similarityDF.plot.bar()
-            plt.savefig(f'{shotFolder}/{movieId}.png')
+            # similarityDF.plot.bar()
+            # plt.savefig(f'{shotFolder}/{movieId}.png')
+
             # Find boundaries
+            boundariesDF = similarityDF[similarityDF['similarity']
+                                        < shotBoundaryThreshold]
+            print(boundariesDF)
+
             # Find middle frame of boundaries
+
             # Add shot boundary to the dataframe
             movieBoundaryCountDF = movieBoundaryCountDF.append(
                 {'movieId': movieId, 'shotBoundaryCount': shotBoundaryCount}, ignore_index=True)
             movieBoundaryCountDF.to_csv(
-                f'{shotFolder}/movieBoundaryCount.csv', index=False)
+                f'{shotFolder}/moviesShotBoundaryCount.csv', index=False)
+            # Logging
+            elapsedTime = '{:.2f}'.format(time.time() - startTime)
+            logger(
+                f'Finished detecting shots movie "{movieId}" in {elapsedTime} seconds.')
