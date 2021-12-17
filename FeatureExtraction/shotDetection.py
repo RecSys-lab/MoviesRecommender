@@ -2,7 +2,8 @@ import os
 import time
 import pandas as pd
 from utils import logger
-from FeatureExtraction.utils import featuresFolderChecker
+from config import packetSize
+from FeatureExtraction.utils import featuresFolderChecker, packetManager
 from FeatureExtraction.ShotDetection.packetsDataCollector import packetsDataCollector
 from FeatureExtraction.ShotDetection.shotBoundaryDetection import shotBoundaryDetection
 from FeatureExtraction.ShotDetection.cosineSimilarityCalculation import cosineSimilarityCalculation
@@ -35,6 +36,9 @@ def shotDetection(featureFoldersList: list, shotFolder: str):
             print(f'Shots were previously detected in {featuresFolder}')
         else:
             startTime = time.time()
+            packetCounter = 0
+            packetIndex = 1  # Holds the name of the packet, e.g. Packet0001
+            dataFrame = pd.DataFrame(columns=['frameId', 'features'])
             # Read packet JSON files
             packetCount = len(os.listdir(featuresFolder))
             print(f'Processing {packetCount} packets of movie "{movieId}" ...')
@@ -44,7 +48,29 @@ def shotDetection(featureFoldersList: list, shotFolder: str):
             similarityDF = cosineSimilarityCalculation(
                 movieId, shotFolder, featuresDF)
             # Find shot boundaries and select the middle frame of each shot
-            shotBoundaryDetection(similarityDF)
+            boundaryFrames = shotBoundaryDetection(similarityDF)
+            # Create a dataframe with the middle frames
+            keyframesDF = featuresDF[featuresDF.index.isin(boundaryFrames)]
+            remainingNumberOfFrames = len(keyframesDF)
+            # Iterate over the keyframes to save them in packets
+            for index, row in keyframesDF.iterrows():
+                # Append rows to dataFrame
+                dataFrame = dataFrame.append(
+                    {'frameId': row['frameId'], 'features': row['features']}, ignore_index=True)
+                packetCounter += 1
+                # Reset the counter only if packetCounter reaches the limit (packetSize) and there is no more frames for process
+                remainingNumberOfFrames -= 1
+                resetCounter = (packetCounter == packetSize) or (
+                    remainingNumberOfFrames == 0)
+                if (resetCounter):
+                    # Save dataFrame as packet in a file
+                    packetManager(packetIndex, dataFrame,
+                                  movieId, shotFolder)
+                    # Clear dataFrame rows
+                    dataFrame.drop(dataFrame.index, inplace=True)
+                    packetCounter = 0
+                    packetIndex += 1
+            # Save the keyframes
             movieBoundaryCountDF = movieBoundaryCountDF.append(
                 {'movieId': movieId, 'shotBoundaryCount': shotBoundaryCount}, ignore_index=True)
             movieBoundaryCountDF.to_csv(
@@ -52,4 +78,4 @@ def shotDetection(featureFoldersList: list, shotFolder: str):
             # Logging
             elapsedTime = '{:.2f}'.format(time.time() - startTime)
             logger(
-                f'Finished detecting shots movie "{movieId}" in {elapsedTime} seconds.')
+                f'Finished detecting shots of movie "{movieId}" in {elapsedTime} seconds.')
