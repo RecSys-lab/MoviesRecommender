@@ -25,11 +25,10 @@ def shotDetection(featureFoldersList: list, shotFolder: str):
     None.
     """
     logger('Starting Feature Extractor ...')
+    movieBoundaryCountDF = pd.DataFrame(
+        columns=['movieId', 'shotBoundaryCount'])
     for featuresFolder in featureFoldersList:
-        shotBoundaryCount = 0
         movieId = featuresFolder.rsplit('/', 1)[1]
-        movieBoundaryCountDF = pd.DataFrame(
-            columns=['movieId', 'shotBoundaryCount'])
         # Check if the folder with the same name of the movie containing features exists
         movieShotsExists = featuresFolderChecker(movieId, shotFolder)
         if (movieShotsExists):
@@ -52,6 +51,9 @@ def shotDetection(featureFoldersList: list, shotFolder: str):
             # Create a dataframe with the middle frames
             keyframesDF = featuresDF[featuresDF.index.isin(boundaryFrames)]
             remainingNumberOfFrames = len(keyframesDF)
+            # Save the keyframes
+            movieBoundaryCountDF = movieBoundaryCountDF.append(
+                {'movieId': movieId, 'shotBoundaryCount': remainingNumberOfFrames}, ignore_index=True)
             # Iterate over the keyframes to save them in packets
             for index, row in keyframesDF.iterrows():
                 # Append rows to dataFrame
@@ -70,12 +72,10 @@ def shotDetection(featureFoldersList: list, shotFolder: str):
                     dataFrame.drop(dataFrame.index, inplace=True)
                     packetCounter = 0
                     packetIndex += 1
-            # Save the keyframes
-            movieBoundaryCountDF = movieBoundaryCountDF.append(
-                {'movieId': movieId, 'shotBoundaryCount': shotBoundaryCount}, ignore_index=True)
-            movieBoundaryCountDF.to_csv(
-                f'{shotFolder}/moviesShotBoundaryCount.csv', index=False)
             # Logging
             elapsedTime = '{:.2f}'.format(time.time() - startTime)
             logger(
                 f'Finished detecting shots of movie "{movieId}" in {elapsedTime} seconds.')
+        # Save per movie shot boundary count to a file
+        movieBoundaryCountDF.to_csv(
+            f'{shotFolder}/moviesShotBoundaryCount.csv', index=False)
