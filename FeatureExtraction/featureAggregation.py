@@ -36,8 +36,10 @@ def featureAggregation(featureFoldersList: list, aggFolder: str):
             # Read packet JSON files
             numberOfPackets = len(os.listdir(featuresFolder))
             # Arrays to store each movie's columns altogether
-            maxMovieAggregatedFeatures = []
-            meanMovieAggregatedFeatures = []
+            movieAggFeatures = []
+            movieAggFeat_Min = []
+            movieAggFeat_Max = []
+            movieAggFeat_Mean = []
             packetCounter = 0
             print(
                 f'Processing {numberOfPackets} packets of the movie "{movieId}" ...')
@@ -46,41 +48,24 @@ def featureAggregation(featureFoldersList: list, aggFolder: str):
                 jsonFile = open(packetFile,)
                 packetData = json.load(jsonFile)
                 packetCounter += 1
-                # Arrays to store each packet's columns altogether
-                packetAggregatedFeatures = []
                 # Iterate on each frames of array
                 for frameData in packetData:
                     features = frameData['features']
                     features = np.asarray(features)
-                    packetAggregatedFeatures.append(features)
-                # Using the packet-level aggregated array for max/mean calculations
-                meanPacketAggregatedFeatures = np.mean(
-                    packetAggregatedFeatures, axis=0)
-                maxPacketAggregatedFeatures = np.max(
-                    packetAggregatedFeatures, axis=0)
-                meanPacketAggregatedFeatures = np.round(
-                    meanPacketAggregatedFeatures, 6)
-                maxPacketAggregatedFeatures = np.round(
-                    maxPacketAggregatedFeatures, 6)
-                # Append them to movie-level aggregation
-                maxMovieAggregatedFeatures.append(maxPacketAggregatedFeatures)
-                meanMovieAggregatedFeatures.append(
-                    meanPacketAggregatedFeatures)
+                    movieAggFeatures.append(features)
                 if (packetCounter % 25 == 0):
                     print(f'Packet #{packetCounter} has been processed!')
             # Using the movie-level aggregated array for max/mean calculations
-            maxMovieAggregatedFeatures = np.mean(
-                maxMovieAggregatedFeatures, axis=0)
-            meanMovieAggregatedFeatures = np.max(
-                meanMovieAggregatedFeatures, axis=0)
-            maxMovieAggregatedFeatures = np.round(
-                maxMovieAggregatedFeatures, 6)
-            meanMovieAggregatedFeatures = np.round(
-                meanMovieAggregatedFeatures, 6)
+            movieAggFeat_Min = np.min(movieAggFeatures, axis=0)
+            movieAggFeat_Max = np.mean(movieAggFeatures, axis=0)
+            movieAggFeat_Mean = np.max(movieAggFeatures, axis=0)
+            movieAggFeat_Min = np.round(movieAggFeat_Min, 6)
+            movieAggFeat_Max = np.round(movieAggFeat_Max, 6)
+            movieAggFeat_Mean = np.round(movieAggFeat_Mean, 6)
             # Save aggregated arrays in files
             dataFrame = pd.DataFrame(columns=['Max', 'Mean'])
             dataFrame = dataFrame.append(
-                {'Max': maxMovieAggregatedFeatures, 'Mean': meanMovieAggregatedFeatures}, ignore_index=True)
+                {'Max': movieAggFeat_Max, 'Min': movieAggFeat_Min, 'Mean': movieAggFeat_Mean}, ignore_index=True)
             dataFrame.to_json(
                 f'{aggFolder}/{movieId}.json', orient="records")
             elapsedTime = '{:.2f}'.format(time.time() - startTime)

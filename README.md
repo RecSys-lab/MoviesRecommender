@@ -92,7 +92,5 @@ python ./main.py
 
 ## TODOs
 
-- [feat] Add Min to feature aggregation and refactor Aggregation module
 - [feat] Add GMM to feature aggregation
-- [feat] Add Shot-Detection module
-- [feat] Run aggregation (mean, max, gmm, min) on Shots
+- [feat] Run aggregation (mean, max, gmm, min) on Shots and Movies
