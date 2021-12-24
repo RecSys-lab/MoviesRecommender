@@ -47,13 +47,14 @@ def shotDetection(featureFoldersList: list, shotFolder: str):
             similarityDF = cosineSimilarityCalculation(
                 movieId, shotFolder, featuresDF)
             # Find shot boundaries and select the middle frame of each shot
-            boundaryFrames = shotBoundaryDetection(similarityDF)
+            boundaryFrames, avgShotLength = shotBoundaryDetection(similarityDF)
+            avgShotLength = round(avgShotLength, 2)
             # Create a dataframe with the middle frames
             keyframesDF = featuresDF[featuresDF.index.isin(boundaryFrames)]
             remainingNumberOfFrames = len(keyframesDF)
             # Save the keyframes
             movieBoundaryCountDF = movieBoundaryCountDF.append(
-                {'movieId': movieId, 'shotBoundaryCount': remainingNumberOfFrames}, ignore_index=True)
+                {'movieId': movieId, 'framesCount': len(featuresDF), 'avgShotLength': avgShotLength, 'shotBoundaryCount': remainingNumberOfFrames}, ignore_index=True)
             # Iterate over the keyframes to save them in packets
             for index, row in keyframesDF.iterrows():
                 # Append rows to dataFrame
