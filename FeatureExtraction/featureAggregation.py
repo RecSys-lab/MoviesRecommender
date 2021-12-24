@@ -5,6 +5,7 @@ import json
 import numpy as np
 import pandas as pd
 from utils import logger
+from sklearn.mixture import GaussianMixture
 
 
 def featureAggregation(featureFoldersList: list, aggFolder: str):
@@ -37,7 +38,6 @@ def featureAggregation(featureFoldersList: list, aggFolder: str):
             numberOfPackets = len(os.listdir(featuresFolder))
             # Arrays to store each movie's columns altogether
             movieAggFeatures = []
-            movieAggFeat_Min = []
             movieAggFeat_Max = []
             movieAggFeat_Mean = []
             packetCounter = 0
@@ -53,19 +53,21 @@ def featureAggregation(featureFoldersList: list, aggFolder: str):
                     features = frameData['features']
                     features = np.asarray(features)
                     movieAggFeatures.append(features)
-                if (packetCounter % 25 == 0):
+                if (packetCounter % 50 == 0):
                     print(f'Packet #{packetCounter} has been processed!')
-            # Using the movie-level aggregated array for max/mean calculations
-            movieAggFeat_Min = np.min(movieAggFeatures, axis=0)
+            # Calculating desired aggregated features
             movieAggFeat_Max = np.mean(movieAggFeatures, axis=0)
             movieAggFeat_Mean = np.max(movieAggFeatures, axis=0)
-            movieAggFeat_Min = np.round(movieAggFeat_Min, 6)
             movieAggFeat_Max = np.round(movieAggFeat_Max, 6)
             movieAggFeat_Mean = np.round(movieAggFeat_Mean, 6)
+            # Calculating Gaussian Mixture Model
+            print(f'Calculating Gaussian Mixture Model for {movieId} ...')
+            movieGMM = GaussianMixture(
+                n_components=2, random_state=0).fit(movieAggFeatures)
             # Save aggregated arrays in files
             dataFrame = pd.DataFrame(columns=['Max', 'Mean'])
             dataFrame = dataFrame.append(
-                {'Max': movieAggFeat_Max, 'Min': movieAggFeat_Min, 'Mean': movieAggFeat_Mean}, ignore_index=True)
+                {'Max': movieAggFeat_Max, 'Mean': movieAggFeat_Mean, 'GMM_Mean': movieGMM.means_}, ignore_index=True)
             dataFrame.to_json(
                 f'{aggFolder}/{movieId}.json', orient="records")
             elapsedTime = '{:.2f}'.format(time.time() - startTime)
