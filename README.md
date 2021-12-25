@@ -92,5 +92,4 @@ python ./main.py
 
 ## TODOs
 
-- [feat] Add GMM to feature aggregation
 - [feat] Run aggregation (mean, max, gmm, min) on Shots and Movies
