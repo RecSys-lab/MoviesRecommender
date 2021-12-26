@@ -54,7 +54,7 @@ def shotDetection(featureFoldersList: list, shotFolder: str):
             remainingNumberOfFrames = len(keyframesDF)
             # Save the keyframes
             movieBoundaryCountDF = movieBoundaryCountDF.append(
-                {'movieId': movieId, 'framesCount': len(featuresDF), 'avgShotLength': avgShotLength, 'shotBoundaryCount': remainingNumberOfFrames}, ignore_index=True)
+                {'movieId': movieId, 'framesCount': len(featuresDF), 'avgShotLength': avgShotLength, 'shotBoundaryCount': len(keyframesDF)}, ignore_index=True)
             # Iterate over the keyframes to save them in packets
             for index, row in keyframesDF.iterrows():
                 # Append rows to dataFrame
