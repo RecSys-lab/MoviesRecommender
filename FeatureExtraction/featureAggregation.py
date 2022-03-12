@@ -56,14 +56,14 @@ def featureAggregation(featureFoldersList: list, aggFolder: str):
                 if (packetCounter % 50 == 0):
                     print(f'Packet #{packetCounter} has been processed!')
             # Calculating desired aggregated features
-            movieAggFeat_Max = np.mean(movieAggFeatures, axis=0)
-            movieAggFeat_Mean = np.max(movieAggFeatures, axis=0)
+            movieAggFeat_Max = np.max(movieAggFeatures, axis=0)
+            movieAggFeat_Mean = np.mean(movieAggFeatures, axis=0)
             movieAggFeat_Max = np.round(movieAggFeat_Max, 6)
             movieAggFeat_Mean = np.round(movieAggFeat_Mean, 6)
             # Calculating Gaussian Mixture Model
-            print(f'Calculating Gaussian Mixture Model for {movieId} ...')
-            movieGMM = GaussianMixture(
-                n_components=2, random_state=0).fit(movieAggFeatures)
+            print(f'Calculating Gaussian Mixture Models for {movieId} ...')
+            movieGMM = GaussianMixture(random_state=0).fit(movieAggFeatures)
+            # movieGMM2 = GaussianMixture(n_components=2, random_state=0).fit(movieAggFeatures)
             # Save aggregated arrays in files
             dataFrame = pd.DataFrame(columns=['Max', 'Mean', 'GMM_Mean'])
             dataFrame = dataFrame.append(
