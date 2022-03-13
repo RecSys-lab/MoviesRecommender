@@ -62,12 +62,11 @@ def featureAggregation(featureFoldersList: list, aggFolder: str):
             movieAggFeat_Mean = np.round(movieAggFeat_Mean, 6)
             # Calculating Gaussian Mixture Model
             print(f'Calculating Gaussian Mixture Models for {movieId} ...')
-            movieGMM = GaussianMixture(random_state=0).fit(movieAggFeatures)
-            # movieGMM2 = GaussianMixture(n_components=2, random_state=0).fit(movieAggFeatures)
+            # movieGMM = GaussianMixture(random_state=0).fit(movieAggFeatures)
             # Save aggregated arrays in files
-            dataFrame = pd.DataFrame(columns=['Max', 'Mean', 'GMM_Mean'])
+            dataFrame = pd.DataFrame(columns=['Max', 'Mean'])
             dataFrame = dataFrame.append(
-                {'Max': movieAggFeat_Max, 'Mean': movieAggFeat_Mean, 'GMM_Mean': movieGMM.means_}, ignore_index=True)
+                {'Max': movieAggFeat_Max, 'Mean': movieAggFeat_Mean}, ignore_index=True)
             dataFrame.to_json(
                 f'{aggFolder}/{movieId}.json', orient="records")
             elapsedTime = '{:.2f}'.format(time.time() - startTime)
