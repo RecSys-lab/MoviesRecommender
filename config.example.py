@@ -1,7 +1,7 @@
 import os
 
 # Dataset Generation
-moviesListCSV = 'C:/Some/Path/Dataset.csv'
+moviesListCSV = os.path.abspath('./Data/moviesList.csv')
 generatedListCSV = os.path.abspath('./Data/generated/output.csv')
 movieLenzRatings = 'C:/Some/Path/ratings.csv'
 
